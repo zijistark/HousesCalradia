@@ -1,0 +1,25 @@
+﻿<Module>
+  <Name value="Houses of Calradia"/>
+  <Id value="HousesCalradia"/>
+  <Version value="d0.1.0.0"/>
+  <SingleplayerModule value="true"/>
+  <MultiplayerModule value="false"/>
+  <DependedModules>
+    <DependedModule Id="Native"/>
+    <DependedModule Id="SandBoxCore"/>
+    <DependedModule Id="Sandbox"/>
+    <DependedModule Id="StoryMode" />
+  </DependedModules>
+  <SubModules>
+    <SubModule>
+      <Name value="Houses of Calradia"/>
+      <DLLName value="HousesCalradia.dll"/>
+      <SubModuleClassType value="HousesCalradia.SubModule"/>
+      <Tags>
+        <Tag key="DedicatedServerType" value="none" />
+        <Tag key="IsNoRenderModeElement" value="false" />
+      </Tags>
+    </SubModule>
+  </SubModules>
+  <Xmls/>
+</Module>
