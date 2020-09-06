@@ -13,21 +13,19 @@ namespace HousesCalradia
 				h.CharacterObject.Occupation == Occupation.Lord &&
 				((isFemale && h.IsFemale) || (!isFemale && !h.IsFemale)));
 
-			Hero template = templateSeq.Where(h => h.Culture == clan.Culture).GetRandomElement();
-
-			if (template == null)
-				template = templateSeq.GetRandomElement();
+			var template = templateSeq.Where(h => h.Culture == clan.Culture).GetRandomElement() ?? templateSeq.GetRandomElement();
 
 			if (template == null)
 				return null;
 
+			ageMax = ageMax <= ageMin ? -1 : ageMax;
 			int age = ageMax < 0 ? ageMin : MBRandom.RandomInt(ageMin, ageMax);
 
 			var hero = HeroCreator.CreateSpecialHero(template.CharacterObject,
-													 bornSettlement: clan.HomeSettlement,
-													 faction: clan,
-													 supporterOfClan: clan,
-													 age: age);
+				bornSettlement: clan.HomeSettlement,
+				faction: clan,
+				supporterOfClan: clan,
+				age: age);
 
 			// Our own, exact age assignment:
 			hero.BirthDay = CampaignTime.Now - CampaignTime.Years(age);
@@ -35,7 +33,7 @@ namespace HousesCalradia
 
 			// TODO: Based upon age, assign her attributes and skills randomly with 2 random attributes getting higher weights for skill specialization
 
-			// TODO: Assign her random traits
+			// TODO: Assign random traits
 
 			hero.Name = hero.FirstName;
 			hero.IsNoble = true;

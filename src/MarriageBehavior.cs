@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Actions;
@@ -73,13 +74,46 @@ namespace HousesCalradia
 
 			var marriageType = string.Empty;
 
-			// Was there an eligible female noble?
+			// Were there no eligible female nobles?
 			if (wife == null)
 			{
-				Util.Log.Print(" -> No eligible candidates to marry.");
+				string spawnMsg = " -> No eligible candidates to marry.";
 
-				// TODO: Calculate probability of marrying a spawned noble and apply it here.
+				// If CF >= 3, then we never spawn a wife.
+				if (clanFitness >= 3)
+				{
+					Util.Log.Print(spawnMsg + " Couldn't spawn wife, because our clan fitness was too high.");
+					return;
+				}
 
+				// Likewise, at 0 < CF < 3, there are restrictions upon spawning a wife based
+				// upon how many preexisting children the hero has sired and/or whether they're
+				// too old.
+				int childCount = hero.Children.Count();
+				int maleChildCount = hero.Children.Where(h => !h.IsFemale).Count();
+
+				if ((clanFitness == 2 && (childCount >= 3 || maleChildCount >= 1 || hero.Age >= 60)) ||
+					(clanFitness == 1 && (childCount >= 4 || maleChildCount >= 2 || hero.Age >= 70)))
+				{
+					Util.Log.Print(spawnMsg + " Couldn't spawn wife, because our clan fitness was too high for our preexisting children or age.");
+					return;
+				}
+
+				// Now, the base chance from here (taking into account that our clan fitness level
+				// has already significantly affected the odds of reaching this point) is simply
+				// 40%, with up to two +5% bonuses for however many children short of 2 we do not
+				// have.
+
+				float spawnChance = 0.4f + Math.Max(0, 0.05f * (2 - childCount));
+				string chanceStr = $" (chance was {spawnChance * 100:F0}%)";
+
+				if (MBRandom.RandomFloat > spawnChance)
+				{
+					Util.Log.Print(spawnMsg + $" Decided not to spawn wife{chanceStr}.");
+					return;
+				}
+
+				Util.Log.Print(spawnMsg + $" Spawning wife{chanceStr}.");
 				marriageType = " (spawned)";
 
 				var originClan = Kingdom.All
@@ -93,11 +127,15 @@ namespace HousesCalradia
 						c != hero.Clan)
 					.GetRandomElement() ?? hero.Clan;
 
-				wife = HeroUtil.SpawnNoble(originClan, ageMin: minAgeFemale, ageMax: Math.Max(minAgeFemale, maxAgeFemale - 10), isFemale: true);
+				int wifeAgeMin = Campaign.Current.Models.MarriageModel.MinimumMarriageAgeFemale;
+				int wifeAgeMax = Math.Min(maxAgeFemale - 5, wifeAgeMin + 10);
+
+				wife = HeroUtil.SpawnNoble(originClan, wifeAgeMin, wifeAgeMax, isFemale: true);
+				wife.IsFertile = true;
 
 				if (wife == null)
 				{
-					Util.Log.Print(" -> ERROR: Could not find character template to spawn female noble!");
+					Util.Log.Print(" ---> ERROR: Could not find character template to spawn female noble!");
 					return;
 				}
 			}
