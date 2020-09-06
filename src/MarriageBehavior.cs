@@ -47,8 +47,7 @@ namespace HousesCalradia
 			var clanFitness = GetClanFitness(hero.Clan);
 			var marriageChance = GetAnnualMarriageChance(clanFitness);
 
-			Util.Log.Print($"[{CampaignTime.Now}] Considering matchmaking at {marriageChance * 100:F1}% chance for " +
-				$"{hero.Name} {hero.Clan.Name} (CF={clanFitness}) of {hero.Clan.Kingdom.Name} (age {hero.Age:F0})...");
+			Util.Log.Print($"[{CampaignTime.Now}] {GetHeroTrace(hero, clanFitness)}: Considering marriage ({marriageChance * 100:F1}% chance)...");
 
 			if (MBRandom.RandomFloat > marriageChance)
 			{
@@ -72,15 +71,39 @@ namespace HousesCalradia
 				.OrderByDescending(h => GetNobleMatchScore(hero, h))
 				.FirstOrDefault();
 
+			var marriageType = string.Empty;
+
 			// Was there an eligible female noble?
 			if (wife == null)
 			{
 				Util.Log.Print(" -> No eligible candidates to marry.");
-				return;
+
+				// TODO: Calculate probability of marrying a spawned noble and apply it here.
+
+				marriageType = " (spawned)";
+
+				var originClan = Kingdom.All
+					.SelectMany(k => k.Clans)
+					.Where(c =>
+						c.Culture == hero.Culture &&
+						!c.IsEliminated &&
+						c.Leader != null &&
+						c.Leader.IsAlive &&
+						c != Clan.PlayerClan &&
+						c != hero.Clan)
+					.GetRandomElement() ?? hero.Clan;
+
+				wife = HeroUtil.SpawnNoble(originClan, ageMin: minAgeFemale, ageMax: Math.Max(minAgeFemale, maxAgeFemale - 10), isFemale: true);
+
+				if (wife == null)
+				{
+					Util.Log.Print(" -> ERROR: Could not find character template to spawn female noble!");
+					return;
+				}
 			}
 
 			// Get married!
-			Util.Log.Print($" -> MARRIED: {wife.Name} {wife.Clan.Name} (CF={GetClanFitness(wife.Clan)}) of {wife.Clan.Kingdom.Name} (age {wife.Age:F0})");
+			Util.Log.Print($" -> MARRIAGE{marriageType}: {GetHeroTrace(wife, GetClanFitness(wife.Clan))}");
 			MarriageAction.Apply(hero, wife);
 		}
 
@@ -95,6 +118,12 @@ namespace HousesCalradia
 			.Count();
 
 		protected float GetAnnualMarriageChance(int clanFitness) => (float)Math.Pow(2, -clanFitness);
+
+		protected string GetHeroTrace(Hero h, int clanFitness = -1)
+		{
+			string fitnessStr = (clanFitness < 0) ? string.Empty : $" (CF={clanFitness})";
+			return $"{h.Name} {h.Clan.Name}{fitnessStr} of {h.Clan.Kingdom.Name} (age {h.Age:F0})";
+		}
 
 		protected float GetNobleMatchScore(Hero suitor, Hero maiden) =>
 			(maiden.Clan.Kingdom == suitor.Clan.Kingdom ? 8000 : 0) + (maiden.Culture == suitor.Culture ? 4000 : 0) - maiden.Age;
