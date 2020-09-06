@@ -56,7 +56,7 @@ namespace HousesCalradia
 				return;
 			}
 
-			// Find eligible candidates for marriage
+			// Find eligible candidates for marriage in order of preference
 			var wife = Kingdom.All
 				.SelectMany(k => k.Clans)
 				.Where(c => !c.IsClanTypeMercenary && c != Clan.PlayerClan)
@@ -69,8 +69,7 @@ namespace HousesCalradia
 					(int)h.Age >= minAgeFemale &&
 					(int)h.Age <= maxAgeFemale &&
 					Campaign.Current.Models.MarriageModel.IsCoupleSuitableForMarriage(hero, h))
-				.OrderByDescending(h => (h.Clan.Kingdom == hero.Clan.Kingdom ? 8000 : 0) + (h.Culture == hero.Culture ? 4000 : 0))
-				.ThenBy(h => h.Age)
+				.OrderByDescending(h => GetNobleMatchScore(hero, h))
 				.FirstOrDefault();
 
 			// Was there an eligible female noble?
@@ -96,6 +95,9 @@ namespace HousesCalradia
 			.Count();
 
 		protected float GetAnnualMarriageChance(int clanFitness) => (float)Math.Pow(2, -clanFitness);
+
+		protected float GetNobleMatchScore(Hero suitor, Hero maiden) =>
+			(maiden.Clan.Kingdom == suitor.Clan.Kingdom ? 8000 : 0) + (maiden.Culture == suitor.Culture ? 4000 : 0) - maiden.Age;
 
 		protected void SetParameters()
 		{
