@@ -24,6 +24,7 @@ namespace HousesCalradia.Patches
 			if (victim == null ||
 				victim.Clan == null ||
 				victim.Clan.Leader != victim ||
+				victim == Hero.MainHero || // No clan extinction prevention for the player (though this might be a nice option)
 				victim.Clan.Lords.Where(h => h.IsAlive && !h.IsChild && h.IsActive && h.IsNoble && h != victim).Any())
 				return;
 
