@@ -64,8 +64,9 @@ namespace HousesCalradia
 				.Where(h =>
 					h.IsFemale &&
 					h.IsAlive &&
-					h.IsActive &&
 					h.IsNoble &&
+					h.IsActive &&
+					h.Spouse == null &&
 					(int)h.Age >= minAgeFemale &&
 					(int)h.Age <= maxAgeFemale &&
 					Campaign.Current.Models.MarriageModel.IsCoupleSuitableForMarriage(hero, h))
@@ -82,7 +83,7 @@ namespace HousesCalradia
 				// If CF >= 3, then we never spawn a wife.
 				if (clanFitness >= 3)
 				{
-					Util.Log.Print(spawnMsg + " Couldn't spawn wife, because our clan fitness was too high.");
+					Util.Log.Print(spawnMsg + " Can't spawn wife, because our clan fitness is too high.");
 					return;
 				}
 
@@ -95,16 +96,16 @@ namespace HousesCalradia
 				if ((clanFitness == 2 && (childCount >= 3 || maleChildCount >= 1 || hero.Age >= 60)) ||
 					(clanFitness == 1 && (childCount >= 4 || maleChildCount >= 2 || hero.Age >= 70)))
 				{
-					Util.Log.Print(spawnMsg + " Couldn't spawn wife, because our clan fitness was too high for our preexisting children or age.");
+					Util.Log.Print(spawnMsg + " Can't spawn wife, because our clan fitness is too high for our prior children or age.");
 					return;
 				}
 
 				// Now, the base chance from here (taking into account that our clan fitness level
 				// has already significantly affected the odds of reaching this point) is simply
-				// 40%, with up to two +5% bonuses for however many children short of 2 we do not
-				// have.
+				// 40%, with up to two +5% bonuses or a -5% malues for however many children short
+				// of 2 we do not already have (i.e., in [35%, 50%]).
 
-				float spawnChance = 0.4f + Math.Max(0, 0.05f * (2 - childCount));
+				float spawnChance = 0.4f + Math.Max(-0.05f, 0.05f * (2 - childCount));
 				string chanceStr = $" (chance was {spawnChance * 100:F0}%)";
 
 				if (MBRandom.RandomFloat > spawnChance)
@@ -113,7 +114,7 @@ namespace HousesCalradia
 					return;
 				}
 
-				Util.Log.Print(spawnMsg + $" Spawning wife{chanceStr}.");
+				Util.Log.Print(spawnMsg + $" Spawning wife{chanceStr}...");
 				marriageType = " (spawned)";
 
 				var originClan = Kingdom.All
@@ -128,7 +129,7 @@ namespace HousesCalradia
 					.GetRandomElement() ?? hero.Clan;
 
 				int wifeAgeMin = Campaign.Current.Models.MarriageModel.MinimumMarriageAgeFemale;
-				int wifeAgeMax = Math.Min(maxAgeFemale - 5, wifeAgeMin + 10);
+				int wifeAgeMax = Math.Min(maxAgeFemale - 5, wifeAgeMin + 5);
 
 				wife = HeroUtil.SpawnNoble(originClan, wifeAgeMin, wifeAgeMax, isFemale: true);
 				wife.IsFertile = true;
@@ -151,7 +152,6 @@ namespace HousesCalradia
 				h.IsAlive &&
 				h.IsActive &&
 				h.Spouse != null &&
-				h.Spouse.IsAlive &&
 				(int)h.Spouse.Age < maxFemaleReproductionAge)
 			.Count();
 

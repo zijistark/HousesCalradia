@@ -75,6 +75,7 @@
     <Compile Include="Log.cs" />
     <Compile Include="LogBase.cs" />
     <Compile Include="MarriageBehavior.cs" />
+    <Compile Include="Patches\KillCharacterActionPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SubModule.cs" />
     <Compile Include="Util.cs" />
