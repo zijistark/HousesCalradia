@@ -3,6 +3,7 @@ using System.Linq;
 using HarmonyLib;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Actions;
+using TaleWorlds.Core;
 
 namespace HousesCalradia.Patches
 {
@@ -35,7 +36,7 @@ namespace HousesCalradia.Patches
 
 			// Spawn a male noble "distant relative" into the clan
 			var ageMin = Campaign.Current.Models.AgeModel.HeroComesOfAge + 1;
-			var successor = HeroUtil.SpawnNoble(victim.Clan, ageMin, ageMax: ageMin + 10);
+			var successor = HeroUtil.SpawnNoble(victim.Clan, ageMin, ageMax: ageMin + 10, isFemale: MBRandom.RandomFloat < 0.5);
 
 			if (successor == null)
 				Util.Log.Print(" -> ERROR: Could not find a noble character template to spawn lord!");
