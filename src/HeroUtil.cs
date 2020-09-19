@@ -31,9 +31,25 @@ namespace HousesCalradia
 			hero.BirthDay = CampaignTime.Now - CampaignTime.Years(age);
 			hero.CharacterObject.Age = hero.Age; // Get it into the BasicCharacterObject.Age property as well
 
-			// TODO: Based upon age, assign her attributes and skills randomly with 2 random attributes getting higher weights for skill specialization
+			// Attributes
+			for (var attr = CharacterAttributesEnum.First; attr < CharacterAttributesEnum.End; ++attr)
+				hero.SetAttributeValue(attr, MBRandom.RandomInt(6, 7));
 
-			// TODO: Assign random traits
+			// Skills: levels & focus point minimums
+			foreach (var skillObj in Game.Current.SkillList)
+			{
+				var curSkill = hero.GetSkillValue(skillObj);
+				var curFocus = hero.HeroDeveloper.GetFocus(skillObj);
+
+				int minSkill = MBRandom.RandomInt(75, 110);
+				int minFocus = minSkill > 95 ? 4 : MBRandom.RandomInt(2, 3);
+
+				if (curSkill < minSkill)
+					hero.HeroDeveloper.ChangeSkillLevel(skillObj, minSkill - curSkill, false);
+
+				if (curFocus < minFocus)
+					hero.HeroDeveloper.AddFocus(skillObj, minFocus - curFocus, false);
+			}
 
 			hero.Name = hero.FirstName;
 			hero.IsNoble = true;
