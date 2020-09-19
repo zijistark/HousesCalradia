@@ -14,10 +14,10 @@ namespace HousesCalradia
 		 * with itself with respect to the prior version. However, if the mod talks to others, that's an actual API too.
 		 * The rest of the version components function as usual.
 		 */
-		public const int SemVerMajor = 0;
-		public const int SemVerMinor = 1;
+		public const int SemVerMajor = 1;
+		public const int SemVerMinor = 0;
 		public const int SemVerPatch = 0;
-		public const string SemVerSpecial = null;
+		public const string SemVerSpecial = "beta1";
 		private static readonly string SemVerEnd = (SemVerSpecial != null) ? '-' + SemVerSpecial : string.Empty;
 		public static readonly string Version = $"{SemVerMajor}.{SemVerMinor}.{SemVerPatch}{SemVerEnd}";
 

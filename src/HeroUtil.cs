@@ -4,7 +4,7 @@ using TaleWorlds.Core;
 
 namespace HousesCalradia
 {
-	public static class HeroUtil
+	static class HeroUtil
 	{
 		public static Hero SpawnNoble(Clan clan, int ageMin, int ageMax = -1, bool isFemale = false)
 		{

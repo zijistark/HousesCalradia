@@ -173,8 +173,14 @@ namespace HousesCalradia
 			minAgeFemale = Math.Max(minAgeFemaleDefault, Campaign.Current.Models.MarriageModel.MinimumMarriageAgeFemale);
 			daysPerHumanYear = GetDaysPerHumanYear();
 
-			// TODO: Need an all-around parameter summary in the log
-			Util.Log.Print($"Days per human year: {daysPerHumanYear}");
+			var trace = new List<string>
+			{
+				$"Min. Age to Marry (Male):   {minAgeMale}",
+				$"Min. Age to Marry (Female): {minAgeFemale}",
+				$"Days Per Human-Year:        {daysPerHumanYear}"
+			};
+
+			Util.Log.Print(trace);
 		}
 
 		protected int GetDaysPerHumanYear()
