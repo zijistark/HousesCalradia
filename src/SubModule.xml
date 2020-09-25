@@ -1,7 +1,7 @@
 ﻿<Module>
   <Name value="Houses of Calradia"/>
   <Id value="HousesCalradia"/>
-  <Version value="v1.0.0"/>
+  <Version value="v1.0.1"/>
   <SingleplayerModule value="true"/>
   <MultiplayerModule value="false"/>
   <DependedModules>
