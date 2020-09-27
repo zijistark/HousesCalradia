@@ -68,6 +68,7 @@
       <HintPath>%(Identity)</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="System" />
   </ItemGroup>
   <!-- Files & Classes -->
   <ItemGroup>
@@ -77,11 +78,15 @@
     <Compile Include="MarriageBehavior.cs" />
     <Compile Include="Patches\KillCharacterActionPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="SubModule.cs" />
     <Compile Include="Util.cs" />
     <Content Include="SubModule.xml" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Bannerlord.MCM">
+      <Version>3.1.9</Version>
+    </PackageReference>
     <PackageReference Include="Lib.Harmony">
       <Version>2.0.2</Version>
     </PackageReference>

@@ -1,0 +1,121 @@
+﻿using System.Collections.Generic;
+using MCM.Abstractions.Attributes;
+using MCM.Abstractions.Attributes.v2;
+using MCM.Abstractions.Settings.Base.Global;
+
+namespace HousesCalradia
+{
+	public class Settings : AttributeGlobalSettings<Settings>
+	{
+		public override string Id => $"{SubModule.Name}_v1";
+		public override string DisplayName => SubModule.DisplayName;
+		public override string FolderName => SubModule.Name;
+		public override string Format => "json";
+
+		private const string AllowSameKingdomDiffCultureMarriage_Hint = "Allow marriages within the same kingdom with a " +
+			"noble of a different culture. Note that same-kingdom, same-culture marriages are always allowed, and " +
+			"same-culture pairings are always preferred. [ Default: ON ]";
+
+		private const string AllowDiffKingdomSameCultureMarriage_Hint = "Allow marriages between different kingdoms if " +
+			"the couple shares the same culture. Same-kingdom pairings will still always be preferred. Excludes ruling " +
+			"clans. [ Default: ON ]";
+
+		private const string AllowDiffKingdomDiffCultureMarriage_Hint = "Allow marriages between different kingdoms " +
+			"even if the couple doesn't share the same culture. Same-kingdom pairings will still always be preferred. " +
+			"Excludes ruling clans. [ Default: OFF ]";
+
+		private const string SpawnNobleWives_Hint = "If there are no eligible noble candidates and their clan " +
+			"desperately needs a marriage to survive, allow nobles a chance to marry a spawned spouse of " +
+			"their culture and kingdom. Strongly recommended. [ Default: ON ]";
+
+		private const string MinMaleMarriageAge_Hint = "Below this age, the matchmaking system will not consider men " +
+			"for marriage. If you set this too low, there will be far fewer potential spouses for the player clan. " +
+			"[ Default: 27 ]";
+
+		private const string MinFemaleMarriageAge_Hint = "Below this age, the matchmaking system will not consider women " +
+			"for marriage. If you set this too low, there will be far fewer potential spouses for the player clan. " +
+			"[ Default: 27 ]";
+
+		private const string MaxFemaleMarriageAge_Hint = "Above this age, the matchmaking system will not consider women " +
+			"for marriage. If you set this too close to menopause (45), more marriages will bear no children. " +
+			"[ Default: 41 ]";
+
+		private const string MarriageChanceMult_Hint = "Multiplied with the annual marriage consideration chance of a " +
+			"noble. The base chance halves at each tier of their clan's fitness to survive. [ Default: 100% ]";
+
+		private const string SpawnedMarriageChanceMult_Hint = "If a clan desperate for a marriage while there are no " +
+			"eligible candidates qualifies for a chance to marry one of the lesser nobility, this is multiplied with " +
+			"that chance. Base chance varies with many factors. [ Default: 100% ]";
+
+		[SettingPropertyBool("Allow Same-Kingdom, Different-Culture Marriage", HintText = AllowSameKingdomDiffCultureMarriage_Hint, RequireRestart = false, Order = 0)]
+		[SettingPropertyGroup("Marriage Settings", GroupOrder = 0)]
+		public bool AllowSameKingdomDiffCultureMarriage { get; set; } = true;
+
+		[SettingPropertyBool("Allow Different-Kingdom, Same-Culture Marriage", HintText = AllowDiffKingdomSameCultureMarriage_Hint, RequireRestart = false, Order = 1)]
+		[SettingPropertyGroup("Marriage Settings")]
+		public bool AllowDiffKingdomSameCultureMarriage { get; set; } = true;
+
+		[SettingPropertyBool("Allow Different-Kingdom, Different-Culture Marriage", HintText = AllowDiffKingdomDiffCultureMarriage_Hint, RequireRestart = false, Order = 2)]
+		[SettingPropertyGroup("Marriage Settings")]
+		public bool AllowDiffKingdomDiffCultureMarriage { get; set; } = false;
+
+		// public bool EnableMinorFactionMarriage { get; set; } = true;
+
+		[SettingPropertyBool("Allow Marriage of Lesser Nobility", HintText = SpawnNobleWives_Hint, RequireRestart = false, Order = 3)]
+		[SettingPropertyGroup("Marriage Settings")]
+		public bool SpawnNobleWives { get; set; } = true;
+
+		[SettingPropertyInteger("Male Minimum Age to Marry", 18, 35, HintText = MinMaleMarriageAge_Hint, RequireRestart = false, Order = 4)]
+		[SettingPropertyGroup("Marriage Settings")]
+		public int MinMaleMarriageAge { get; set; } = 27;
+
+		[SettingPropertyInteger("Female Minimum Age to Marry", 18, 35, HintText = MinFemaleMarriageAge_Hint, RequireRestart = false, Order = 5)]
+		[SettingPropertyGroup("Marriage Settings")]
+		public int MinFemaleMarriageAge { get; set; } = 27;
+
+		[SettingPropertyInteger("Female Maximum Age to Marry", 36, 44, HintText = MaxFemaleMarriageAge_Hint, RequireRestart = false, Order = 6)]
+		[SettingPropertyGroup("Marriage Settings")]
+		public int MaxFemaleMarriageAge { get; set; } = 41;
+
+		[SettingPropertyFloatingInteger("Marriage Consideration Chance Multiplier", 0f, 2f, "#0%", HintText = MarriageChanceMult_Hint, RequireRestart = false, Order = 7)]
+		[SettingPropertyGroup("Marriage Settings")]
+		public float MarriageChanceMult { get; set; } = 1f;
+
+		[SettingPropertyFloatingInteger("Lesser Nobility Marriage Chance Multiplier", 0f, 2f, "#0%", HintText = SpawnedMarriageChanceMult_Hint, RequireRestart = false, Order = 8)]
+		[SettingPropertyGroup("Marriage Settings")]
+		public float SpawnedMarriageChanceMult { get; set; } = 1f;
+
+		///////
+
+		private const string AllowPlayerExecutionToEliminateClan_Hint = "If the final surviving adult noble in a clan (i.e., " +
+			"the leader) is executed by the player, then the clan will be allowed to go extinct.";
+
+		[SettingPropertyBool("Player Execution Can Eliminate Clans", HintText = AllowPlayerExecutionToEliminateClan_Hint, RequireRestart = false, Order = 0)]
+		[SettingPropertyGroup("Clan Extinction Prevention Settings", GroupOrder = 1)]
+		public bool AllowPlayerExecutionToEliminateClan { get; set; } = true;
+
+		//////
+
+		public List<string> ToStringLines(uint indentSize = 0)
+		{
+			string prefix = string.Empty;
+
+			for (uint i = 0; i < indentSize; ++i)
+				prefix += " ";
+
+			return new List<string>
+			{
+				$"{prefix}{nameof(AllowSameKingdomDiffCultureMarriage)} = {AllowSameKingdomDiffCultureMarriage}",
+				$"{prefix}{nameof(AllowDiffKingdomSameCultureMarriage)} = {AllowDiffKingdomSameCultureMarriage}",
+				$"{prefix}{nameof(AllowDiffKingdomDiffCultureMarriage)} = {AllowDiffKingdomDiffCultureMarriage}",
+				$"{prefix}{nameof(SpawnNobleWives)}                     = {SpawnNobleWives}",
+				$"{prefix}{nameof(MinMaleMarriageAge)}                  = {MinMaleMarriageAge}",
+				$"{prefix}{nameof(MinFemaleMarriageAge)}                = {MinFemaleMarriageAge}",
+				$"{prefix}{nameof(MaxFemaleMarriageAge)}                = {MaxFemaleMarriageAge}",
+				$"{prefix}{nameof(MarriageChanceMult)}                  = {MarriageChanceMult}",
+				$"{prefix}{nameof(SpawnedMarriageChanceMult)}           = {SpawnedMarriageChanceMult}",
+				$"{prefix}{nameof(AllowPlayerExecutionToEliminateClan)} = {AllowPlayerExecutionToEliminateClan}",
+			};
+		}
+	}
+}
