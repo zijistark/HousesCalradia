@@ -66,7 +66,7 @@ namespace HousesCalradia
 				var harmony = new Harmony(HarmonyDomain);
 				harmony.PatchAll();
 
-				Util.Log.Print($"Loaded {DisplayName}!");
+				Util.Log.Print($"Loaded {DisplayName}!\n");
 				InformationManager.DisplayMessage(new InformationMessage($"Loaded {DisplayName}", ImportantTextColor));
 				hasLoaded = true;
 			}

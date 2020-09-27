@@ -21,8 +21,8 @@ namespace HousesCalradia
 			"clans. [ Default: ON ]";
 
 		private const string AllowDiffKingdomDiffCultureMarriage_Hint = "Allow marriages between different kingdoms " +
-			"even if the couple doesn't share the same culture. Same-kingdom pairings will still always be preferred. " +
-			"Excludes ruling clans. [ Default: OFF ]";
+			"even if the couple doesn't share the same culture. Same-kingdom and/or same-culture pairings will still " +
+			"always be preferred. Excludes ruling clans. [ Default: OFF ]";
 
 		private const string SpawnNobleWives_Hint = "If there are no eligible noble candidates and their clan " +
 			"desperately needs a marriage to survive, allow nobles a chance to marry a spawned spouse of " +
@@ -41,57 +41,58 @@ namespace HousesCalradia
 			"[ Default: 41 ]";
 
 		private const string MarriageChanceMult_Hint = "Multiplied with the annual marriage consideration chance of a " +
-			"noble. The base chance halves at each tier of their clan's fitness to survive. [ Default: 100% ]";
+			"noble. The base chance halves at each tier of their clan's fitness to survive. Recommended to stay below " +
+			"150% / 1.5x for proper clan fitness prioritization. [ Default: 100% ]";
 
 		private const string SpawnedMarriageChanceMult_Hint = "If a clan desperate for a marriage while there are no " +
 			"eligible candidates qualifies for a chance to marry one of the lesser nobility, this is multiplied with " +
 			"that chance. Base chance varies with many factors. [ Default: 100% ]";
 
 		[SettingPropertyBool("Allow Same-Kingdom, Different-Culture Marriage", HintText = AllowSameKingdomDiffCultureMarriage_Hint, RequireRestart = false, Order = 0)]
-		[SettingPropertyGroup("Marriage Settings", GroupOrder = 0)]
+		[SettingPropertyGroup("AI Noble Marriage", GroupOrder = 0)]
 		public bool AllowSameKingdomDiffCultureMarriage { get; set; } = true;
 
 		[SettingPropertyBool("Allow Different-Kingdom, Same-Culture Marriage", HintText = AllowDiffKingdomSameCultureMarriage_Hint, RequireRestart = false, Order = 1)]
-		[SettingPropertyGroup("Marriage Settings")]
+		[SettingPropertyGroup("AI Noble Marriage")]
 		public bool AllowDiffKingdomSameCultureMarriage { get; set; } = true;
 
 		[SettingPropertyBool("Allow Different-Kingdom, Different-Culture Marriage", HintText = AllowDiffKingdomDiffCultureMarriage_Hint, RequireRestart = false, Order = 2)]
-		[SettingPropertyGroup("Marriage Settings")]
+		[SettingPropertyGroup("AI Noble Marriage")]
 		public bool AllowDiffKingdomDiffCultureMarriage { get; set; } = false;
 
 		// public bool EnableMinorFactionMarriage { get; set; } = true;
 
 		[SettingPropertyBool("Allow Marriage of Lesser Nobility", HintText = SpawnNobleWives_Hint, RequireRestart = false, Order = 3)]
-		[SettingPropertyGroup("Marriage Settings")]
+		[SettingPropertyGroup("AI Noble Marriage")]
 		public bool SpawnNobleWives { get; set; } = true;
 
 		[SettingPropertyInteger("Male Minimum Age to Marry", 18, 35, HintText = MinMaleMarriageAge_Hint, RequireRestart = false, Order = 4)]
-		[SettingPropertyGroup("Marriage Settings")]
+		[SettingPropertyGroup("AI Noble Marriage")]
 		public int MinMaleMarriageAge { get; set; } = 27;
 
 		[SettingPropertyInteger("Female Minimum Age to Marry", 18, 35, HintText = MinFemaleMarriageAge_Hint, RequireRestart = false, Order = 5)]
-		[SettingPropertyGroup("Marriage Settings")]
+		[SettingPropertyGroup("AI Noble Marriage ")]
 		public int MinFemaleMarriageAge { get; set; } = 27;
 
 		[SettingPropertyInteger("Female Maximum Age to Marry", 36, 44, HintText = MaxFemaleMarriageAge_Hint, RequireRestart = false, Order = 6)]
-		[SettingPropertyGroup("Marriage Settings")]
+		[SettingPropertyGroup("AI Noble Marriage")]
 		public int MaxFemaleMarriageAge { get; set; } = 41;
 
 		[SettingPropertyFloatingInteger("Marriage Consideration Chance Multiplier", 0f, 2f, "#0%", HintText = MarriageChanceMult_Hint, RequireRestart = false, Order = 7)]
-		[SettingPropertyGroup("Marriage Settings")]
+		[SettingPropertyGroup("AI Noble Marriage")]
 		public float MarriageChanceMult { get; set; } = 1f;
 
 		[SettingPropertyFloatingInteger("Lesser Nobility Marriage Chance Multiplier", 0f, 2f, "#0%", HintText = SpawnedMarriageChanceMult_Hint, RequireRestart = false, Order = 8)]
-		[SettingPropertyGroup("Marriage Settings")]
+		[SettingPropertyGroup("AI Noble Marriage")]
 		public float SpawnedMarriageChanceMult { get; set; } = 1f;
 
 		///////
 
-		private const string AllowPlayerExecutionToEliminateClan_Hint = "If the final surviving adult noble in a clan (i.e., " +
-			"the leader) is executed by the player, then the clan will be allowed to go extinct.";
+		private const string AllowPlayerExecutionToEliminateClan_Hint = "If the final surviving adult noble in a " +
+			"clan (i.e., the leader) is executed by the player, then the clan will be allowed to go extinct.";
 
-		[SettingPropertyBool("Player Execution Can Eliminate Clans", HintText = AllowPlayerExecutionToEliminateClan_Hint, RequireRestart = false, Order = 0)]
-		[SettingPropertyGroup("Clan Extinction Prevention Settings", GroupOrder = 1)]
+		[SettingPropertyBool("Execution Can Eliminate Noble Clans", HintText = AllowPlayerExecutionToEliminateClan_Hint, RequireRestart = false, Order = 0)]
+		[SettingPropertyGroup("Clan Extinction Prevention", GroupOrder = 1)]
 		public bool AllowPlayerExecutionToEliminateClan { get; set; } = true;
 
 		//////
