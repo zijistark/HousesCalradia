@@ -18,11 +18,15 @@ namespace HousesCalradia
 
 		private const string AllowDiffKingdomSameCultureMarriage_Hint = "Allow marriages between different kingdoms if " +
 			"the couple shares the same culture. Same-kingdom pairings will still always be preferred. Excludes ruling " +
-			"clans. [ Default: ON ]";
+			"clans unless that setting is enabled. [ Default: ON ]";
 
 		private const string AllowDiffKingdomDiffCultureMarriage_Hint = "Allow marriages between different kingdoms " +
 			"even if the couple doesn't share the same culture. Same-kingdom and/or same-culture pairings will still " +
-			"always be preferred. Excludes ruling clans. [ Default: OFF ]";
+			"always be preferred. Excludes ruling clans unless that setting is enabled. [ Default: OFF ]";
+
+		private const string AllowDiffKingdomMarriageForRulingClans_Hint = "Allow kingdom rulers' clans to marry " +
+			"into families in different kingdoms in whichever cases different-kingdom marriage is allowed (if any). " +
+			"[ Default: ON ]";
 
 		private const string SpawnNobleWives_Hint = "If there are no eligible noble candidates and their clan " +
 			"desperately needs a marriage to survive, allow nobles a chance to marry a spawned spouse of " +
@@ -60,29 +64,33 @@ namespace HousesCalradia
 		[SettingPropertyGroup("AI Noble Marriage")]
 		public bool AllowDiffKingdomDiffCultureMarriage { get; set; } = false;
 
+		[SettingPropertyBool("Allow Different-Kingdom Marriages for Ruling Clans", HintText = AllowDiffKingdomMarriageForRulingClans_Hint, RequireRestart = false, Order = 3)]
+		[SettingPropertyGroup("AI Noble Marriage")]
+		public bool AllowDiffKingdomMarriageForRulingClans { get; set; } = true;
+
 		// public bool EnableMinorFactionMarriage { get; set; } = true;
 
-		[SettingPropertyBool("Allow Marriage of Lesser Nobility", HintText = SpawnNobleWives_Hint, RequireRestart = false, Order = 3)]
+		[SettingPropertyBool("Allow Marriage of Lesser Nobility", HintText = SpawnNobleWives_Hint, RequireRestart = false, Order = 4)]
 		[SettingPropertyGroup("AI Noble Marriage")]
 		public bool SpawnNobleWives { get; set; } = true;
 
-		[SettingPropertyInteger("Male Minimum Age to Marry", 18, 35, HintText = MinMaleMarriageAge_Hint, RequireRestart = false, Order = 4)]
+		[SettingPropertyInteger("Male Minimum Age to Marry", 18, 35, HintText = MinMaleMarriageAge_Hint, RequireRestart = false, Order = 5)]
 		[SettingPropertyGroup("AI Noble Marriage")]
 		public int MinMaleMarriageAge { get; set; } = 27;
 
-		[SettingPropertyInteger("Female Minimum Age to Marry", 18, 35, HintText = MinFemaleMarriageAge_Hint, RequireRestart = false, Order = 5)]
+		[SettingPropertyInteger("Female Minimum Age to Marry", 18, 35, HintText = MinFemaleMarriageAge_Hint, RequireRestart = false, Order = 6)]
 		[SettingPropertyGroup("AI Noble Marriage ")]
 		public int MinFemaleMarriageAge { get; set; } = 27;
 
-		[SettingPropertyInteger("Female Maximum Age to Marry", 36, 44, HintText = MaxFemaleMarriageAge_Hint, RequireRestart = false, Order = 6)]
+		[SettingPropertyInteger("Female Maximum Age to Marry", 36, 44, HintText = MaxFemaleMarriageAge_Hint, RequireRestart = false, Order = 7)]
 		[SettingPropertyGroup("AI Noble Marriage")]
 		public int MaxFemaleMarriageAge { get; set; } = 41;
 
-		[SettingPropertyFloatingInteger("Marriage Consideration Chance Multiplier", 0f, 2f, "#0%", HintText = MarriageChanceMult_Hint, RequireRestart = false, Order = 7)]
+		[SettingPropertyFloatingInteger("Marriage Consideration Chance Multiplier", 0f, 2f, "#0%", HintText = MarriageChanceMult_Hint, RequireRestart = false, Order = 8)]
 		[SettingPropertyGroup("AI Noble Marriage")]
 		public float MarriageChanceMult { get; set; } = 1f;
 
-		[SettingPropertyFloatingInteger("Lesser Nobility Marriage Chance Multiplier", 0f, 2f, "#0%", HintText = SpawnedMarriageChanceMult_Hint, RequireRestart = false, Order = 8)]
+		[SettingPropertyFloatingInteger("Lesser Nobility Marriage Chance Multiplier", 0f, 2f, "#0%", HintText = SpawnedMarriageChanceMult_Hint, RequireRestart = false, Order = 9)]
 		[SettingPropertyGroup("AI Noble Marriage")]
 		public float SpawnedMarriageChanceMult { get; set; } = 1f;
 

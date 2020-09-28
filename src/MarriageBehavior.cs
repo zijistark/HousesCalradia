@@ -61,10 +61,12 @@ namespace HousesCalradia
 			var wife = Kingdom.All
 				.Where(k =>
 					!k.IsEliminated &&
-					(!sameKingdomOnly || k == hero.Clan.Kingdom) &&
-					(k == hero.Clan.Kingdom || !k.IsAtWarWith(hero.Clan.Kingdom)))
+					IsKingdomAllowedForMarriageByConfig(hero, k))
 				.SelectMany(k => k.Clans)
-				.Where(c => !c.IsClanTypeMercenary && c != Clan.PlayerClan)
+				.Where(c =>
+					!c.IsEliminated &&
+					!c.IsClanTypeMercenary &&
+					c != Clan.PlayerClan)
 				.SelectMany(c => c.Lords)
 				.Where(h =>
 					h.IsFemale &&
@@ -72,7 +74,7 @@ namespace HousesCalradia
 					h.IsNoble &&
 					h.IsActive &&
 					h.Spouse == null &&
-					IsMarriageAllowedByConfig(hero, h) &&
+					IsMaidenAllowedForMarriageByConfig(hero, h) &&
 					Campaign.Current.Models.MarriageModel.IsCoupleSuitableForMarriage(hero, h))
 				.OrderByDescending(h => GetNobleMatchScore(hero, h))
 				.FirstOrDefault();
@@ -158,7 +160,24 @@ namespace HousesCalradia
 		protected float GetAnnualMarriageChance(int clanFitness) =>
 			(float)Math.Pow(2, -clanFitness) * SubModule.Config.MarriageChanceMult;
 
-		protected bool IsMarriageAllowedByConfig(Hero suitor, Hero maiden)
+		protected bool IsKingdomAllowedForMarriageByConfig(Hero suitor, Kingdom kingdom)
+		{
+			if (kingdom == suitor.Clan.Kingdom)
+				return true; // Same-kingdom is always allowed
+
+			// From here on, it must be a different kingdom.
+
+			if (sameKingdomOnly)
+				return false;
+
+			if (!SubModule.Config.AllowDiffKingdomMarriageForRulingClans &&
+				suitor.Clan == suitor.Clan.Kingdom.RulingClan)
+				return false;
+
+			return !kingdom.IsAtWarWith(suitor.Clan.Kingdom);
+		}
+
+		protected bool IsMaidenAllowedForMarriageByConfig(Hero suitor, Hero maiden)
 		{
 			int age = (int)maiden.Age;
 
@@ -166,6 +185,12 @@ namespace HousesCalradia
 				return false;
 
 			bool sameKingdom = suitor.Clan.Kingdom == maiden.Clan.Kingdom;
+
+			if (!sameKingdom &&
+				!SubModule.Config.AllowDiffKingdomMarriageForRulingClans &&
+				maiden.Clan == maiden.Clan.Kingdom.RulingClan)
+				return false;
+
 			bool sameCulture = suitor.Culture == maiden.Culture;
 
 			return (sameKingdom && sameCulture) ||
