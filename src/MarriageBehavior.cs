@@ -59,7 +59,10 @@ namespace HousesCalradia
 
 			// Find eligible candidates for marriage in order of preference
 			var wife = Kingdom.All
-				.Where(k => !k.IsEliminated && (!sameKingdomOnly || k == hero.Clan.Kingdom))
+				.Where(k =>
+					!k.IsEliminated &&
+					(!sameKingdomOnly || k == hero.Clan.Kingdom) &&
+					(k == hero.Clan.Kingdom || !k.IsAtWarWith(hero.Clan.Kingdom)))
 				.SelectMany(k => k.Clans)
 				.Where(c => !c.IsClanTypeMercenary && c != Clan.PlayerClan)
 				.SelectMany(c => c.Lords)
