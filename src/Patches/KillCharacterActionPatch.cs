@@ -45,6 +45,11 @@ namespace HousesCalradia.Patches
 				clan.Lords.Where(h => h.IsAlive && !h.IsChild && h.IsActive && h.IsNoble && h != victim).Any())
 				return;
 
+			if (SubModule.Config.AllowPlayerExecutionToEliminateClan &&
+				killer == Hero.MainHero &&
+				actionDetail == KillCharacterAction.KillCharacterActionDetail.Executed)
+				return;
+
 			var deathReasonStr = Enum.GetName(typeof(KillCharacterAction.KillCharacterActionDetail), actionDetail);
 
 			Util.Log.Print($"[{CampaignTime.Now}] CLAN EXTINCTION PREVENTION: Leader of clan {clan.Name}, " +
