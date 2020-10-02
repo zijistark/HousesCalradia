@@ -79,7 +79,7 @@ namespace HousesCalradia
 		public int MinMaleMarriageAge { get; set; } = 27;
 
 		[SettingPropertyInteger("Female Minimum Age to Marry", 18, 35, HintText = MinFemaleMarriageAge_Hint, RequireRestart = false, Order = 6)]
-		[SettingPropertyGroup("AI Noble Marriage ")]
+		[SettingPropertyGroup("AI Noble Marriage")]
 		public int MinFemaleMarriageAge { get; set; } = 27;
 
 		[SettingPropertyInteger("Female Maximum Age to Marry", 36, 44, HintText = MaxFemaleMarriageAge_Hint, RequireRestart = false, Order = 7)]
