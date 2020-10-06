@@ -86,7 +86,7 @@ namespace HousesCalradia
 			{
 				string spawnMsg = " -> No eligible candidates to marry.";
 
-				if (!SubModule.Config.SpawnNobleWives || SubModule.Config.SpawnedMarriageChanceMult < 0.01f)
+				if (!Config.SpawnNobleWives || Config.SpawnedMarriageChanceMult < 0.01f)
 				{
 					Util.Log.Print(spawnMsg);
 					return;
@@ -118,7 +118,7 @@ namespace HousesCalradia
 				// of 2 we do not already have (i.e., in [30%, 50%]).
 
 				float spawnChance = 0.4f + Math.Max(-0.1f, 0.05f * (2 - childCount));
-				spawnChance *= SubModule.Config.SpawnedMarriageChanceMult; // Modified by our config
+				spawnChance *= Config.SpawnedMarriageChanceMult; // Modified by our config
 				var chanceStr = $" (chance was {spawnChance * 100:F0}%)";
 
 				if (MBRandom.RandomFloat > spawnChance)
@@ -158,7 +158,7 @@ namespace HousesCalradia
 			.Count();
 
 		protected float GetAnnualMarriageChance(int clanFitness) =>
-			(float)Math.Pow(2, -clanFitness) * SubModule.Config.MarriageChanceMult;
+			(float)Math.Pow(2, -clanFitness) * Config.MarriageChanceMult;
 
 		protected bool IsKingdomAllowedForMarriageByConfig(Hero suitor, Kingdom kingdom)
 		{
@@ -170,7 +170,7 @@ namespace HousesCalradia
 			if (sameKingdomOnly)
 				return false;
 
-			if (!SubModule.Config.AllowDiffKingdomMarriageForRulingClans &&
+			if (!Config.AllowDiffKingdomMarriageForRulingClans &&
 				suitor.Clan == suitor.Clan.Kingdom.RulingClan)
 				return false;
 
@@ -187,16 +187,16 @@ namespace HousesCalradia
 			bool sameKingdom = suitor.Clan.Kingdom == maiden.Clan.Kingdom;
 
 			if (!sameKingdom &&
-				!SubModule.Config.AllowDiffKingdomMarriageForRulingClans &&
+				!Config.AllowDiffKingdomMarriageForRulingClans &&
 				maiden.Clan == maiden.Clan.Kingdom.RulingClan)
 				return false;
 
 			bool sameCulture = suitor.Culture == maiden.Culture;
 
 			return (sameKingdom && sameCulture) ||
-				(SubModule.Config.AllowSameKingdomDiffCultureMarriage && sameKingdom) ||
-				(SubModule.Config.AllowDiffKingdomSameCultureMarriage && sameCulture) ||
-				(SubModule.Config.AllowDiffKingdomDiffCultureMarriage && !sameKingdom && !sameCulture);
+				(Config.AllowSameKingdomDiffCultureMarriage && sameKingdom) ||
+				(Config.AllowDiffKingdomSameCultureMarriage && sameCulture) ||
+				(Config.AllowDiffKingdomDiffCultureMarriage && !sameKingdom && !sameCulture);
 		}
 
 		protected float GetNobleMatchScore(Hero suitor, Hero maiden) =>
@@ -212,13 +212,13 @@ namespace HousesCalradia
 
 		protected void SetParameters()
 		{
-			minAgeMale = Math.Max(SubModule.Config.MinMaleMarriageAge, Campaign.Current.Models.MarriageModel.MinimumMarriageAgeMale);
-			minAgeFemale = Math.Max(SubModule.Config.MinFemaleMarriageAge, Campaign.Current.Models.MarriageModel.MinimumMarriageAgeFemale);
-			maxAgeFemale = Math.Max(minAgeFemale + 1, SubModule.Config.MaxFemaleMarriageAge);
+			minAgeMale = Math.Max(Config.MinMaleMarriageAge, Campaign.Current.Models.MarriageModel.MinimumMarriageAgeMale);
+			minAgeFemale = Math.Max(Config.MinFemaleMarriageAge, Campaign.Current.Models.MarriageModel.MinimumMarriageAgeFemale);
+			maxAgeFemale = Math.Max(minAgeFemale + 1, Config.MaxFemaleMarriageAge);
 			daysPerHumanYear = GetDaysPerHumanYear();
 
-			sameKingdomOnly = !SubModule.Config.AllowDiffKingdomSameCultureMarriage &&
-				!SubModule.Config.AllowDiffKingdomDiffCultureMarriage;
+			sameKingdomOnly = !Config.AllowDiffKingdomSameCultureMarriage &&
+				!Config.AllowDiffKingdomDiffCultureMarriage;
 
 			var trace = new List<string>
 			{
