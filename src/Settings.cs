@@ -54,45 +54,45 @@ namespace HousesCalradia
 
 		[SettingPropertyBool("Allow Same-Kingdom, Different-Culture Marriage", HintText = AllowSameKingdomDiffCultureMarriage_Hint, RequireRestart = false, Order = 0)]
 		[SettingPropertyGroup("AI Noble Marriage", GroupOrder = 0)]
-		public bool AllowSameKingdomDiffCultureMarriage { get; set; } = true;
+		public bool AllowSameKingdomDiffCultureMarriage { get; set; } = Config.AllowSameKingdomDiffCultureMarriage;
 
 		[SettingPropertyBool("Allow Different-Kingdom, Same-Culture Marriage", HintText = AllowDiffKingdomSameCultureMarriage_Hint, RequireRestart = false, Order = 1)]
 		[SettingPropertyGroup("AI Noble Marriage")]
-		public bool AllowDiffKingdomSameCultureMarriage { get; set; } = true;
+		public bool AllowDiffKingdomSameCultureMarriage { get; set; } = Config.AllowDiffKingdomSameCultureMarriage;
 
 		[SettingPropertyBool("Allow Different-Kingdom, Different-Culture Marriage", HintText = AllowDiffKingdomDiffCultureMarriage_Hint, RequireRestart = false, Order = 2)]
 		[SettingPropertyGroup("AI Noble Marriage")]
-		public bool AllowDiffKingdomDiffCultureMarriage { get; set; } = false;
+		public bool AllowDiffKingdomDiffCultureMarriage { get; set; } = Config.AllowDiffKingdomDiffCultureMarriage;
 
 		[SettingPropertyBool("Allow Different-Kingdom Marriages for Ruling Clans", HintText = AllowDiffKingdomMarriageForRulingClans_Hint, RequireRestart = false, Order = 3)]
 		[SettingPropertyGroup("AI Noble Marriage")]
-		public bool AllowDiffKingdomMarriageForRulingClans { get; set; } = true;
+		public bool AllowDiffKingdomMarriageForRulingClans { get; set; } = Config.AllowDiffKingdomMarriageForRulingClans;
 
 		// public bool EnableMinorFactionMarriage { get; set; } = true;
 
 		[SettingPropertyBool("Allow Marriage of Lesser Nobility", HintText = SpawnNobleWives_Hint, RequireRestart = false, Order = 4)]
 		[SettingPropertyGroup("AI Noble Marriage")]
-		public bool SpawnNobleWives { get; set; } = true;
+		public bool SpawnNobleWives { get; set; } = Config.SpawnNobleWives;
 
 		[SettingPropertyInteger("Male Minimum Age to Marry", 18, 35, HintText = MinMaleMarriageAge_Hint, RequireRestart = false, Order = 5)]
 		[SettingPropertyGroup("AI Noble Marriage")]
-		public int MinMaleMarriageAge { get; set; } = 27;
+		public int MinMaleMarriageAge { get; set; } = Config.MinMaleMarriageAge;
 
 		[SettingPropertyInteger("Female Minimum Age to Marry", 18, 35, HintText = MinFemaleMarriageAge_Hint, RequireRestart = false, Order = 6)]
 		[SettingPropertyGroup("AI Noble Marriage")]
-		public int MinFemaleMarriageAge { get; set; } = 27;
+		public int MinFemaleMarriageAge { get; set; } = Config.MinFemaleMarriageAge;
 
 		[SettingPropertyInteger("Female Maximum Age to Marry", 36, 44, HintText = MaxFemaleMarriageAge_Hint, RequireRestart = false, Order = 7)]
 		[SettingPropertyGroup("AI Noble Marriage")]
-		public int MaxFemaleMarriageAge { get; set; } = 41;
+		public int MaxFemaleMarriageAge { get; set; } = Config.MaxFemaleMarriageAge;
 
 		[SettingPropertyFloatingInteger("Marriage Consideration Chance Multiplier", 0f, 2f, "#0%", HintText = MarriageChanceMult_Hint, RequireRestart = false, Order = 8)]
 		[SettingPropertyGroup("AI Noble Marriage")]
-		public float MarriageChanceMult { get; set; } = 1f;
+		public float MarriageChanceMult { get; set; } = Config.MarriageChanceMult;
 
 		[SettingPropertyFloatingInteger("Lesser Nobility Marriage Chance Multiplier", 0f, 2f, "#0%", HintText = SpawnedMarriageChanceMult_Hint, RequireRestart = false, Order = 9)]
 		[SettingPropertyGroup("AI Noble Marriage")]
-		public float SpawnedMarriageChanceMult { get; set; } = 1f;
+		public float SpawnedMarriageChanceMult { get; set; } = Config.SpawnedMarriageChanceMult;
 
 		///////
 
@@ -101,30 +101,6 @@ namespace HousesCalradia
 
 		[SettingPropertyBool("Execution Can Eliminate Noble Clans", HintText = AllowPlayerExecutionToEliminateClan_Hint, RequireRestart = false, Order = 0)]
 		[SettingPropertyGroup("Clan Extinction Prevention", GroupOrder = 1)]
-		public bool AllowPlayerExecutionToEliminateClan { get; set; } = true;
-
-		//////
-
-		public List<string> ToStringLines(uint indentSize = 0)
-		{
-			string prefix = string.Empty;
-
-			for (uint i = 0; i < indentSize; ++i)
-				prefix += " ";
-
-			return new List<string>
-			{
-				$"{prefix}{nameof(AllowSameKingdomDiffCultureMarriage)} = {AllowSameKingdomDiffCultureMarriage}",
-				$"{prefix}{nameof(AllowDiffKingdomSameCultureMarriage)} = {AllowDiffKingdomSameCultureMarriage}",
-				$"{prefix}{nameof(AllowDiffKingdomDiffCultureMarriage)} = {AllowDiffKingdomDiffCultureMarriage}",
-				$"{prefix}{nameof(SpawnNobleWives)}                     = {SpawnNobleWives}",
-				$"{prefix}{nameof(MinMaleMarriageAge)}                  = {MinMaleMarriageAge}",
-				$"{prefix}{nameof(MinFemaleMarriageAge)}                = {MinFemaleMarriageAge}",
-				$"{prefix}{nameof(MaxFemaleMarriageAge)}                = {MaxFemaleMarriageAge}",
-				$"{prefix}{nameof(MarriageChanceMult)}                  = {MarriageChanceMult}",
-				$"{prefix}{nameof(SpawnedMarriageChanceMult)}           = {SpawnedMarriageChanceMult}",
-				$"{prefix}{nameof(AllowPlayerExecutionToEliminateClan)} = {AllowPlayerExecutionToEliminateClan}",
-			};
-		}
+		public bool AllowPlayerExecutionToEliminateClan { get; set; } = Config.AllowPlayerExecutionToEliminateClan;
 	}
 }

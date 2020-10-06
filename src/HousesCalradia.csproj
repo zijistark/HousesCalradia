@@ -72,6 +72,7 @@
   </ItemGroup>
   <!-- Files & Classes -->
   <ItemGroup>
+    <Compile Include="Config.cs" />
     <Compile Include="HeroUtil.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="LogBase.cs" />

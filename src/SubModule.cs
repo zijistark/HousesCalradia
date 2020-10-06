@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel;
 using HarmonyLib;
 using TaleWorlds.CampaignSystem;
@@ -29,8 +29,6 @@ namespace HousesCalradia
 
 		internal static readonly Color ImportantTextColor = Color.FromUint(0x00F16D26); // orange
 
-		internal static Settings Config;
-
 		protected override void OnSubModuleLoad()
 		{
 			base.OnSubModuleLoad();
@@ -44,22 +42,32 @@ namespace HousesCalradia
 			if (!hasLoaded)
 			{
 				Util.Log.Print($"Loading {DisplayName}...");
+				bool useMcm;
 
-				if (Settings.Instance == null)
+				try
 				{
-					Util.Log.Print("MCM settings instance NOT found. Using defaults.");
-					Config = new Settings();
+					useMcm = Settings.Instance != null;
 				}
+				catch (Exception)
+				{
+					useMcm = false;
+				}
+
+				if (!useMcm)
+					Util.Log.Print("MCM settings instance NOT found! Using defaults.");
 				else
 				{
 					Util.Log.Print("MCM settings instance found!");
-					Config = Settings.Instance;
+					var settings = Settings.Instance;
+
+					// Copy current settings to master config
+					Config.CopyFromSettings(settings);
 
 					// Register for settings property-changed events
-					Config.PropertyChanged += Settings_OnPropertyChanged;
+					settings.PropertyChanged += Settings_OnPropertyChanged;
 				}
 
-				Util.Log.Print("\nSettings:");
+				Util.Log.Print("\nConfiguration:");
 				Util.Log.Print(Config.ToStringLines(indentSize: 4));
 				Util.Log.Print(string.Empty);
 
@@ -90,6 +98,7 @@ namespace HousesCalradia
 			if (sender is Settings && args.PropertyName == Settings.SaveTriggered)
 			{
 				Util.Log.Print("Received Settings save-triggered event...\n\nNew Settings:");
+				Config.CopyFromSettings(sender as Settings);
 				Util.Log.Print(Config.ToStringLines(indentSize: 4));
 				Util.Log.Print(string.Empty);
 			}

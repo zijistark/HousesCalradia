@@ -19,7 +19,7 @@ namespace HousesCalradia.Patches
 			KillCharacterAction.KillCharacterActionDetail actionDetail,
 			bool showNotification)
 		{
-			_ = (killer, showNotification);
+			_ = showNotification;
 
 			if (victim == null || victim == Hero.MainHero)
 				return;
@@ -45,7 +45,7 @@ namespace HousesCalradia.Patches
 				clan.Lords.Where(h => h.IsAlive && !h.IsChild && h.IsActive && h.IsNoble && h != victim).Any())
 				return;
 
-			if (SubModule.Config.AllowPlayerExecutionToEliminateClan &&
+			if (Config.AllowPlayerExecutionToEliminateClan &&
 				killer == Hero.MainHero &&
 				actionDetail == KillCharacterAction.KillCharacterActionDetail.Executed)
 				return;
