@@ -15,7 +15,7 @@
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup>
-    <GameDir>$(MOUNT_AND_BLADE_DIR)</GameDir>
+    <GameDir>$(BANNERLORD_GAME_DIR)</GameDir>
     <ModName>$(AssemblyName)</ModName>
     <ModDir>$(GameDir)\Modules\$(ModName)</ModDir>
   </PropertyGroup>
