@@ -1,9 +1,10 @@
 ﻿<Module>
   <Name value="Houses of Calradia"/>
   <Id value="HousesCalradia"/>
-  <Version value="v1.1.1"/>
+  <Version value="v$version$" />
   <SingleplayerModule value="true"/>
   <MultiplayerModule value="false"/>
+  <Url value="https://www.nexusmods.com/mountandblade2bannerlord/mods/2174" />
   <DependedModules>
     <DependedModule Id="Native"/>
     <DependedModule Id="SandBoxCore"/>
@@ -15,10 +16,7 @@
       <Name value="Houses of Calradia"/>
       <DLLName value="HousesCalradia.dll"/>
       <SubModuleClassType value="HousesCalradia.SubModule"/>
-      <Tags>
-        <Tag key="DedicatedServerType" value="none" />
-        <Tag key="IsNoRenderModeElement" value="false" />
-      </Tags>
+      <Tags />
     </SubModule>
   </SubModules>
   <Xmls/>
