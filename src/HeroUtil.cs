@@ -4,18 +4,18 @@ using TaleWorlds.Core;
 
 namespace HousesCalradia
 {
-	static class HeroUtil
+	internal static class HeroUtil
 	{
-		public static Hero SpawnNoble(Clan clan, int ageMin, int ageMax = -1, bool isFemale = false)
+		public static Hero? SpawnNoble(Clan clan, int ageMin, int ageMax = -1, bool isFemale = false)
 		{
 			var templateSeq = Hero.All.Where(h =>
 				h.IsNoble &&
 				h.CharacterObject.Occupation == Occupation.Lord &&
-				((isFemale && h.IsFemale) || (!isFemale && !h.IsFemale)));
+				(isFemale && h.IsFemale || !isFemale && !h.IsFemale));
 
 			var template = templateSeq.Where(h => h.Culture == clan.Culture).GetRandomElement() ?? templateSeq.GetRandomElement();
 
-			if (template == null)
+			if (template is null)
 				return null;
 
 			ageMax = ageMax <= ageMin ? -1 : ageMax;
@@ -28,6 +28,7 @@ namespace HousesCalradia
 				age: age);
 
 			// Our own, exact age assignment:
+			// FIXME: Will need update in e1.5.5
 			hero.BirthDay = CampaignTime.Now - CampaignTime.Years(age);
 			hero.CharacterObject.Age = hero.Age; // Get it into the BasicCharacterObject.Age property as well
 
@@ -50,6 +51,11 @@ namespace HousesCalradia
 				if (curFocus < minFocus)
 					hero.HeroDeveloper.AddFocus(skillObj, minFocus - curFocus, false);
 			}
+
+			// TODO:
+			// - morph StaticBodyParameters a bit, in a way that doesn't result in ogres
+			// - equip them with a culture-appropriate horse and horse harness
+			// - ensure they have some decent equipment (maybe pick a template soldier from each culture)
 
 			hero.Name = hero.FirstName;
 			hero.IsNoble = true;

@@ -5,22 +5,22 @@ using System.Text;
 
 namespace HousesCalradia
 {
-	public class Log : LogBase
+	internal sealed class Log : LogBase
 	{
-		private const string BeginMultiLine      = @"=======================================================================================================================\";
-		private const string EndMultiLine        = @"=======================================================================================================================/";
+		private const string BeginMultiLine = @"=======================================================================================================================\";
+		private const string EndMultiLine   = @"=======================================================================================================================/";
 
 		public readonly string Module;
 		public readonly string LogDir;
 		public readonly string LogFile;
 		public readonly string LogPath;
 
-		protected TextWriter Writer { get; set; }
-		protected bool LastWasMultiline { get; set; } = false;
+		private TextWriter? Writer { get; set; }
+		private bool LastWasMultiline { get; set; } = false;
 
 		public override void Print(string line)
 		{
-			if (Writer == null)
+			if (Writer is null)
 				return;
 
 			LastWasMultiline = false;
@@ -30,7 +30,7 @@ namespace HousesCalradia
 
 		public override void Print(List<string> lines)
 		{
-			if (Writer == null || lines.Count == 0)
+			if (Writer is null || lines.Count == 0)
 				return;
 
 			if (lines.Count == 1)
@@ -51,27 +51,21 @@ namespace HousesCalradia
 			Writer.Flush();
 		}
 
-		public Log(bool truncate = false, string logName = null)
+		public Log(bool truncate = false, string? logName = null)
 		{
 			var userDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "Mount and Blade II Bannerlord");
 
-			Module = $"{this.GetType().Namespace}.{this.GetType().Name}";
-
+			Module = GetType().FullName;
 			LogDir = Path.Combine(userDir, "Logs");
+			LogFile = logName is null ? $"{GetType().Namespace}.log" : $"{GetType().Namespace}.{logName}.log";
+            LogPath = Path.Combine(LogDir, LogFile);
 
-			if (logName == null)
-				LogFile = $"{this.GetType().Namespace}.log";
-			else
-				LogFile = $"{this.GetType().Namespace}.{logName}.log";
-
-			LogPath = Path.Combine(LogDir, LogFile);
 			Directory.CreateDirectory(LogDir);
 			var existed = File.Exists(LogPath);
 
 			try
 			{
-				// Give it a 64KiB buffer so that it will essentially never block on interim WriteLine calls:
-				Writer = TextWriter.Synchronized( new StreamWriter(LogPath, !truncate, Encoding.UTF8, 1 << 16) );
+				Writer = TextWriter.Synchronized(new StreamWriter(LogPath, !truncate, Encoding.UTF8, 1 << 15));
 			}
 			catch (Exception e)
 			{
@@ -101,18 +95,6 @@ namespace HousesCalradia
 			}
 
 			Print(msg);
-		}
-
-		~Log()
-		{
-			try
-			{
-				Writer.Dispose();
-			}
-			catch (Exception)
-			{
-				// at least we tried.
-			}
 		}
 	}
 }

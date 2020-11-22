@@ -16,11 +16,11 @@ namespace HousesCalradia
 		 * with itself with respect to the prior version. However, if the mod talks to others, that's an actual API too.
 		 * The rest of the version components function as usual.
 		 */
-		public const int SemVerMajor = 1;
-		public const int SemVerMinor = 1;
-		public const int SemVerPatch = 1;
-		public const string SemVerSpecial = null;
-		private static readonly string SemVerEnd = (SemVerSpecial != null) ? '-' + SemVerSpecial : string.Empty;
+		public static readonly int SemVerMajor = 1;
+		public static readonly int SemVerMinor = 1;
+		public static readonly int SemVerPatch = 2;
+		public static readonly string? SemVerSpecial = null;
+		private static readonly string SemVerEnd = (SemVerSpecial is null) ? string.Empty : "-" + SemVerSpecial;
 		public static readonly string Version = $"{SemVerMajor}.{SemVerMinor}.{SemVerPatch}{SemVerEnd}";
 
 		public static readonly string Name = typeof(SubModule).Namespace;
@@ -42,30 +42,26 @@ namespace HousesCalradia
 			if (!hasLoaded)
 			{
 				Util.Log.Print($"Loading {DisplayName}...");
-				bool useMcm;
+				bool useMcm = false;
 
 				try
 				{
-					useMcm = Settings.Instance != null;
+					if (Settings.Instance is { } settings)
+					{
+						useMcm = true;
+						Util.Log.Print("MCM settings instance found!");
+
+						// Copy current settings to master config
+						Config.CopyFromSettings(settings);
+
+						// Register for settings property-changed events
+						settings.PropertyChanged += Settings_OnPropertyChanged;
+					}
 				}
-				catch (Exception)
-				{
-					useMcm = false;
-				}
+				catch (Exception) { }
 
 				if (!useMcm)
 					Util.Log.Print("MCM settings instance NOT found! Using defaults.");
-				else
-				{
-					Util.Log.Print("MCM settings instance found!");
-					var settings = Settings.Instance;
-
-					// Copy current settings to master config
-					Config.CopyFromSettings(settings);
-
-					// Register for settings property-changed events
-					settings.PropertyChanged += Settings_OnPropertyChanged;
-				}
 
 				Util.Log.Print("\nConfiguration:");
 				Util.Log.Print(Config.ToStringLines(indentSize: 4));
@@ -86,24 +82,22 @@ namespace HousesCalradia
 
 			if (game.GameType is Campaign)
 			{
-				CampaignGameStarter initializer = (CampaignGameStarter)starterObject;
-				AddBehaviors(initializer);
+				var initializer = (CampaignGameStarter)starterObject;
+				initializer.AddBehavior(new MarriageBehavior());
 			}
 		}
 
-		protected void AddBehaviors(CampaignGameStarter gameInitializer) =>	gameInitializer.AddBehavior(new MarriageBehavior());
-
 		protected static void Settings_OnPropertyChanged(object sender, PropertyChangedEventArgs args)
 		{
-			if (sender is Settings && args.PropertyName == Settings.SaveTriggered)
+			if (sender is Settings settings && args.PropertyName == Settings.SaveTriggered)
 			{
 				Util.Log.Print("Received Settings save-triggered event...\n\nNew Settings:");
-				Config.CopyFromSettings(sender as Settings);
+				Config.CopyFromSettings(settings);
 				Util.Log.Print(Config.ToStringLines(indentSize: 4));
 				Util.Log.Print(string.Empty);
 			}
 		}
 
-		private bool hasLoaded = false;
+		private bool hasLoaded;
 	}
 }

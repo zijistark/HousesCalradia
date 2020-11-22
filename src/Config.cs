@@ -2,12 +2,11 @@
 
 namespace HousesCalradia
 {
-	static class Config
+	internal static class Config
 	{
 		internal static bool AllowSameKingdomDiffCultureMarriage { get; set; } = true;
 		internal static bool AllowDiffKingdomSameCultureMarriage { get; set; } = true;
 		internal static bool AllowDiffKingdomDiffCultureMarriage { get; set; } = false;
-		internal static bool AllowDiffKingdomMarriageForRulingClans { get; set; } = true;
 		internal static bool SpawnNobleWives { get; set; } = true;
 		internal static int MinMaleMarriageAge { get; set; } = 27;
 		internal static int MinFemaleMarriageAge { get; set; } = 27;
@@ -21,7 +20,6 @@ namespace HousesCalradia
 			AllowSameKingdomDiffCultureMarriage = settings.AllowSameKingdomDiffCultureMarriage;
 			AllowDiffKingdomSameCultureMarriage = settings.AllowDiffKingdomSameCultureMarriage;
 			AllowDiffKingdomDiffCultureMarriage = settings.AllowDiffKingdomDiffCultureMarriage;
-			AllowDiffKingdomMarriageForRulingClans = settings.AllowDiffKingdomMarriageForRulingClans;
 			SpawnNobleWives = settings.SpawnNobleWives;
 			MinMaleMarriageAge = settings.MinMaleMarriageAge;
 			MinFemaleMarriageAge = settings.MinFemaleMarriageAge;

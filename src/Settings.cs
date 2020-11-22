@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using MCM.Abstractions.Attributes;
+﻿using MCM.Abstractions.Attributes;
 using MCM.Abstractions.Attributes.v2;
 using MCM.Abstractions.Settings.Base.Global;
 
@@ -18,15 +17,11 @@ namespace HousesCalradia
 
 		private const string AllowDiffKingdomSameCultureMarriage_Hint = "Allow marriages between different kingdoms if " +
 			"the couple shares the same culture. Same-kingdom pairings will still always be preferred. Excludes ruling " +
-			"clans unless that setting is enabled. [ Default: ON ]";
+			"clans. [ Default: ON ]";
 
 		private const string AllowDiffKingdomDiffCultureMarriage_Hint = "Allow marriages between different kingdoms " +
 			"even if the couple doesn't share the same culture. Same-kingdom and/or same-culture pairings will still " +
-			"always be preferred. Excludes ruling clans unless that setting is enabled. [ Default: OFF ]";
-
-		private const string AllowDiffKingdomMarriageForRulingClans_Hint = "Allow kingdom rulers' clans to marry " +
-			"into families in different kingdoms in whichever cases different-kingdom marriage is allowed (if any). " +
-			"[ Default: ON ]";
+			"always be preferred. Excludes ruling clans. [ Default: OFF ]";
 
 		private const string SpawnNobleWives_Hint = "If there are no eligible noble candidates and their clan " +
 			"desperately needs a marriage to survive, allow nobles a chance to marry a spawned spouse of " +
@@ -64,33 +59,29 @@ namespace HousesCalradia
 		[SettingPropertyGroup("AI Noble Marriage")]
 		public bool AllowDiffKingdomDiffCultureMarriage { get; set; } = Config.AllowDiffKingdomDiffCultureMarriage;
 
-		[SettingPropertyBool("Allow Different-Kingdom Marriages for Ruling Clans", HintText = AllowDiffKingdomMarriageForRulingClans_Hint, RequireRestart = false, Order = 3)]
-		[SettingPropertyGroup("AI Noble Marriage")]
-		public bool AllowDiffKingdomMarriageForRulingClans { get; set; } = Config.AllowDiffKingdomMarriageForRulingClans;
-
 		// public bool EnableMinorFactionMarriage { get; set; } = true;
 
-		[SettingPropertyBool("Allow Marriage of Lesser Nobility", HintText = SpawnNobleWives_Hint, RequireRestart = false, Order = 4)]
+		[SettingPropertyBool("Allow Marriage of Lesser Nobility", HintText = SpawnNobleWives_Hint, RequireRestart = false, Order = 3)]
 		[SettingPropertyGroup("AI Noble Marriage")]
 		public bool SpawnNobleWives { get; set; } = Config.SpawnNobleWives;
 
-		[SettingPropertyInteger("Male Minimum Age to Marry", 18, 35, HintText = MinMaleMarriageAge_Hint, RequireRestart = false, Order = 5)]
+		[SettingPropertyInteger("Male Minimum Age to Marry", 18, 35, HintText = MinMaleMarriageAge_Hint, RequireRestart = false, Order = 4)]
 		[SettingPropertyGroup("AI Noble Marriage")]
 		public int MinMaleMarriageAge { get; set; } = Config.MinMaleMarriageAge;
 
-		[SettingPropertyInteger("Female Minimum Age to Marry", 18, 35, HintText = MinFemaleMarriageAge_Hint, RequireRestart = false, Order = 6)]
+		[SettingPropertyInteger("Female Minimum Age to Marry", 18, 35, HintText = MinFemaleMarriageAge_Hint, RequireRestart = false, Order = 5)]
 		[SettingPropertyGroup("AI Noble Marriage")]
 		public int MinFemaleMarriageAge { get; set; } = Config.MinFemaleMarriageAge;
 
-		[SettingPropertyInteger("Female Maximum Age to Marry", 36, 44, HintText = MaxFemaleMarriageAge_Hint, RequireRestart = false, Order = 7)]
+		[SettingPropertyInteger("Female Maximum Age to Marry", 36, 44, HintText = MaxFemaleMarriageAge_Hint, RequireRestart = false, Order = 6)]
 		[SettingPropertyGroup("AI Noble Marriage")]
 		public int MaxFemaleMarriageAge { get; set; } = Config.MaxFemaleMarriageAge;
 
-		[SettingPropertyFloatingInteger("Marriage Consideration Chance Multiplier", 0f, 2f, "#0%", HintText = MarriageChanceMult_Hint, RequireRestart = false, Order = 8)]
+		[SettingPropertyFloatingInteger("Marriage Consideration Chance Multiplier", 0f, 2f, "#0%", HintText = MarriageChanceMult_Hint, RequireRestart = false, Order = 7)]
 		[SettingPropertyGroup("AI Noble Marriage")]
 		public float MarriageChanceMult { get; set; } = Config.MarriageChanceMult;
 
-		[SettingPropertyFloatingInteger("Lesser Nobility Marriage Chance Multiplier", 0f, 2f, "#0%", HintText = SpawnedMarriageChanceMult_Hint, RequireRestart = false, Order = 9)]
+		[SettingPropertyFloatingInteger("Lesser Nobility Marriage Chance Multiplier", 0f, 2f, "#0%", HintText = SpawnedMarriageChanceMult_Hint, RequireRestart = false, Order = 8)]
 		[SettingPropertyGroup("AI Noble Marriage")]
 		public float SpawnedMarriageChanceMult { get; set; } = Config.SpawnedMarriageChanceMult;
 

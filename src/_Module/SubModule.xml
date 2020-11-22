@@ -6,7 +6,6 @@
   <MultiplayerModule value="false"/>
   <Url value="https://www.nexusmods.com/mountandblade2bannerlord/mods/2174" />
   <DependedModules>
-    <DependedModule Id="Bannerlord.Harmony" />
     <DependedModule Id="Native"/>
     <DependedModule Id="SandBoxCore"/>
     <DependedModule Id="Sandbox"/>

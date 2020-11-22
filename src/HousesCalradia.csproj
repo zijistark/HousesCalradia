@@ -2,10 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
+    <PlatformTarget>x64</PlatformTarget>
     <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
 
-    <Version>1.1.1</Version>
+    <Version>1.1.2</Version>
     <GameFolder>$(BANNERLORD_GAME_DIR)</GameFolder>
     <ModuleName>$(AssemblyName)</ModuleName>
   </PropertyGroup>
@@ -17,7 +18,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Bannerlord.MCM" Version="4.1.2" />
-    <PackageReference Include="Lib.Harmony" Version="2.0.2" IncludeAssets="compile" />
+    <PackageReference Include="Lib.Harmony" Version="2.0.4" />
   </ItemGroup>
 
   <!-- Bannerlord Native Assemblies -->
