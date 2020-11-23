@@ -3,7 +3,7 @@
 	<a href="https://www.codefactor.io/repository/github/zijistark/housescalradia"><img src="https://www.codefactor.io/repository/github/zijistark/housescalradia/badge" alt="CodeFactor"/></a>
 </p>
 
-Access [Houses of Calradia's NexusMods site](https://www.nexusmods.com/mountandblade2bannerlord/mods/2174) now to get to it!
+Access [Houses of Calradia's NexusMods site](https://www.nexusmods.com/mountandblade2bannerlord/mods/2174) now for detailed information and downloads.
 
 # Houses of Calradia
 
