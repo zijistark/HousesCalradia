@@ -20,7 +20,7 @@ namespace HousesCalradia.Patches
         [HarmonyPrefix]
         [HarmonyPriority(Priority.HigherThanNormal)]
         [HarmonyPatch("ApplyInternal")]
-        private static void ApplyInternalPrefix(
+        static void ApplyInternalPrefix(
             Hero victim,
             Hero killer,
             KillCharacterAction.KillCharacterActionDetail actionDetail,
