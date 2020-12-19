@@ -1,5 +1,5 @@
-﻿using System.Drawing.Text;
-using System.Linq;
+﻿using System.Linq;
+
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
 
@@ -58,17 +58,27 @@ namespace HousesCalradia
             // Find a high-tier cavalry-based soldier from which to template the new hero's BattleEquipment,
             // preferably with the same gender (though it usually doesn't matter too much in armor, it can),
             // and of course preferably with the same culture as the new hero.
-            var equipSoldierSeq = CharacterObject.All
-                .Where(c => c.Occupation == Occupation.Soldier
-                    && (c.Tier == 5 || c.Tier == 6)
-                    && (c.DefaultFormationClass == FormationClass.HeavyCavalry
-                        || c.DefaultFormationClass == FormationClass.Cavalry
-                        || c.DefaultFormationClass == FormationClass.HorseArcher
-                        || c.DefaultFormationClass == FormationClass.LightCavalry));
+            static bool TroopHasPreferredFormationClass(CharacterObject c)
+            {
+                return c.DefaultFormationClass == FormationClass.HeavyCavalry
+                    || c.DefaultFormationClass == FormationClass.Cavalry
+                    || c.DefaultFormationClass == FormationClass.HorseArcher
+                    || c.DefaultFormationClass == FormationClass.LightCavalry;
+            }
 
-            var equipSoldier = equipSoldierSeq.Where(c => c.Culture == hero.Culture && c.IsFemale == isFemale).GetRandomElement()
-                ?? equipSoldierSeq.Where(c => c.Culture == hero.Culture).GetRandomElement()
-                ?? equipSoldierSeq.GetRandomElement();
+            var equipSoldierSeq = CharacterObject.All.Where(c => c.Occupation == Occupation.Soldier && c.Tier >= 5);
+
+            var equipSoldier = equipSoldierSeq
+                .Where(c => TroopHasPreferredFormationClass(c)
+                    && c.Culture == hero.Culture
+                    && c.IsFemale == isFemale).GetRandomElement();
+
+            equipSoldier ??= equipSoldierSeq.Where(c => TroopHasPreferredFormationClass(c) && c.Culture == hero.Culture).GetRandomElement();
+            equipSoldier ??= equipSoldierSeq.Where(c => c.Culture == hero.Culture && c.IsFemale == isFemale).GetRandomElement();
+            equipSoldier ??= equipSoldierSeq.Where(c => c.Culture == hero.Culture).GetRandomElement();
+            equipSoldier ??= equipSoldierSeq.Where(c => TroopHasPreferredFormationClass(c) && c.IsFemale == isFemale).GetRandomElement();
+            equipSoldier ??= equipSoldierSeq.Where(c => TroopHasPreferredFormationClass(c)).GetRandomElement();
+            equipSoldier ??= equipSoldierSeq.GetRandomElement();
 
             if (equipSoldier?.BattleEquipments.GetRandomElement() is { } equip)
                 hero.BattleEquipment.FillFrom(equip);
