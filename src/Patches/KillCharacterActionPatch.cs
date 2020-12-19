@@ -10,8 +10,13 @@ using TaleWorlds.Core;
 namespace HousesCalradia.Patches
 {
     [HarmonyPatch(typeof(KillCharacterAction))]
-    sealed class KillCharacterActionPatch
+    internal sealed class KillCharacterActionPatch
     {
+        internal static class ReferenceStuff
+        {
+            internal static void DontReally() => ApplyInternalPrefix(null!, null!, KillCharacterAction.KillCharacterActionDetail.None, true);
+        }
+
         [HarmonyPrefix]
         [HarmonyPriority(Priority.HigherThanNormal)]
         [HarmonyPatch("ApplyInternal")]
