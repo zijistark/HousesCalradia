@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Drawing.Text;
+using System.Linq;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
 
@@ -8,10 +9,10 @@ namespace HousesCalradia
     {
         public static Hero? SpawnNoble(Clan clan, int ageMin, int ageMax = -1, bool isFemale = false)
         {
-            var templateSeq = Hero.All.Where(h =>
-                h.IsNoble &&
-                h.CharacterObject.Occupation == Occupation.Lord &&
-                (isFemale && h.IsFemale || !isFemale && !h.IsFemale));
+            var templateSeq = Hero.All
+                .Where(h => h.IsNoble
+                    && h.CharacterObject.Occupation == Occupation.Lord
+                    && h.IsFemale == isFemale);
 
             var template = templateSeq.Where(h => h.Culture == clan.Culture).GetRandomElement() ?? templateSeq.GetRandomElement();
 
@@ -27,14 +28,11 @@ namespace HousesCalradia
                 supporterOfClan: clan,
                 age: age);
 
-            // Our own, exact age assignment:
-            // FIXME: Will need update in e1.5.5
-            hero.BirthDay = CampaignTime.Now - CampaignTime.Years(age);
-            hero.CharacterObject.Age = hero.Age; // Get it into the BasicCharacterObject.Age property as well
-
             // Attributes
             for (var attr = CharacterAttributesEnum.First; attr < CharacterAttributesEnum.End; ++attr)
                 hero.SetAttributeValue(attr, MBRandom.RandomInt(6, 7));
+
+            const int MinRidingSkill = 100;
 
             // Skills: levels & focus point minimums
             foreach (var skillObj in Game.Current.SkillList)
@@ -42,8 +40,13 @@ namespace HousesCalradia
                 var curSkill = hero.GetSkillValue(skillObj);
                 var curFocus = hero.HeroDeveloper.GetFocus(skillObj);
 
-                int minSkill = MBRandom.RandomInt(75, 110);
-                int minFocus = minSkill > 95 ? 4 : MBRandom.RandomInt(2, 3);
+                var (min, max) = (75, 125);
+
+                if (skillObj == DefaultSkills.Riding)
+                    min = MinRidingSkill;
+
+                int minSkill = MBRandom.RandomInt(min, max);
+                int minFocus = minSkill >= 100 ? 4 : MBRandom.RandomInt(2, 3);
 
                 if (curSkill < minSkill)
                     hero.HeroDeveloper.ChangeSkillLevel(skillObj, minSkill - curSkill, false);
@@ -52,10 +55,26 @@ namespace HousesCalradia
                     hero.HeroDeveloper.AddFocus(skillObj, minFocus - curFocus, false);
             }
 
+            // Find a high-tier cavalry-based soldier from which to template the new hero's BattleEquipment,
+            // preferably with the same gender (though it usually doesn't matter too much in armor, it can),
+            // and of course preferably with the same culture as the new hero.
+            var equipSoldierSeq = CharacterObject.All
+                .Where(c => c.Occupation == Occupation.Soldier
+                    && (c.Tier == 5 || c.Tier == 6)
+                    && (c.DefaultFormationClass == FormationClass.HeavyCavalry
+                        || c.DefaultFormationClass == FormationClass.Cavalry
+                        || c.DefaultFormationClass == FormationClass.HorseArcher
+                        || c.DefaultFormationClass == FormationClass.LightCavalry));
+
+            var equipSoldier = equipSoldierSeq.Where(c => c.Culture == hero.Culture && c.IsFemale == isFemale).GetRandomElement()
+                ?? equipSoldierSeq.Where(c => c.Culture == hero.Culture).GetRandomElement()
+                ?? equipSoldierSeq.GetRandomElement();
+
+            if (equipSoldier?.BattleEquipments.GetRandomElement() is { } equip)
+                hero.BattleEquipment.FillFrom(equip);
+
             // TODO:
             // - morph StaticBodyParameters a bit, in a way that doesn't result in ogres
-            // - equip them with a culture-appropriate horse and horse harness
-            // - ensure they have some decent equipment (maybe pick a template soldier from each culture)
 
             hero.Name = hero.FirstName;
             hero.IsNoble = true;
