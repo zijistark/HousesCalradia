@@ -42,25 +42,18 @@ namespace HousesCalradia
             if (!hasLoaded)
             {
                 Util.Log.Print($"Loading {DisplayName}...");
-                bool useMcm = false;
 
-                try
+                if (Settings.Instance is { } settings)
                 {
-                    if (Settings.Instance is { } settings)
-                    {
-                        useMcm = true;
-                        Util.Log.Print("MCM settings instance found!");
+                    Util.Log.Print("MCM settings instance found!");
 
-                        // Copy current settings to master config
-                        Config.CopyFromSettings(settings);
+                    // Copy current settings to master config
+                    Config.CopyFromSettings(settings);
 
-                        // Register for settings property-changed events
-                        settings.PropertyChanged += Settings_OnPropertyChanged;
-                    }
+                    // Register for settings property-changed events
+                    settings.PropertyChanged += Settings_OnPropertyChanged;
                 }
-                catch (Exception) { }
-
-                if (!useMcm)
+                else
                     Util.Log.Print("MCM settings instance NOT found! Using defaults.");
 
                 Util.Log.Print("\nConfiguration:");

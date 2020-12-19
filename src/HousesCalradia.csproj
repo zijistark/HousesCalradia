@@ -6,14 +6,14 @@
     <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
 
-    <Version>1.1.2</Version>
+    <Version>1.2.0</Version>
     <GameFolder>$(BANNERLORD_GAME_DIR)</GameFolder>
     <ModuleName>$(AssemblyName)</ModuleName>
   </PropertyGroup>
 
   <!--NuGet References-->
   <ItemGroup>
-    <PackageReference Include="Bannerlord.BuildResources" Version="1.0.0.25">
+    <PackageReference Include="Bannerlord.BuildResources" Version="1.0.0.32">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
