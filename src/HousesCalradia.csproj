@@ -1,14 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <Version>1.2.0</Version>
+    <GameFolder>$(BANNERLORD_GAME_DIR)</GameFolder>
+    <ModuleName>$(AssemblyName)</ModuleName>
     <TargetFramework>net472</TargetFramework>
     <PlatformTarget>x64</PlatformTarget>
     <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
-
-    <Version>1.2.0</Version>
-    <GameFolder>$(BANNERLORD_GAME_DIR)</GameFolder>
-    <ModuleName>$(AssemblyName)</ModuleName>
   </PropertyGroup>
 
   <!--NuGet References-->
@@ -45,5 +44,4 @@
       <Private>False</Private>
     </Reference>
   </ItemGroup>
-
 </Project>

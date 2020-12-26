@@ -40,10 +40,12 @@ namespace HousesCalradia
                 hero.Clan is null ||
                 hero.Clan.Kingdom is null ||
                 (int)hero.Age < minAgeMale ||
-                !Campaign.Current.Models.MarriageModel.IsSuitableForMarriage(hero) ||
+                !marriageModel!.IsSuitableForMarriage(hero) ||
                 hero.Clan.IsClanTypeMercenary ||
                 hero.Clan == Clan.PlayerClan)
+            {
                 return;
+            }
 
             var clanFitness = GetClanFitness(hero.Clan);
             var marriageChance = GetAnnualMarriageChance(clanFitness);
@@ -58,23 +60,20 @@ namespace HousesCalradia
 
             // Find eligible candidates for marriage in order of preference
             var wife = Kingdom.All
-                .Where(k =>
-                    !k.IsEliminated &&
-                    IsKingdomAllowedForMarriageByConfig(hero, k))
+                .Where(k => !k.IsEliminated
+                         && IsKingdomAllowedForMarriageByConfig(hero, k))
                 .SelectMany(k => k.Clans)
-                .Where(c =>
-                    !c.IsEliminated &&
-                    !c.IsClanTypeMercenary &&
-                    c != Clan.PlayerClan)
+                .Where(c => !c.IsEliminated
+                         && !c.IsClanTypeMercenary
+                         && c != Clan.PlayerClan)
                 .SelectMany(c => c.Lords)
-                .Where(h =>
-                    h.IsFemale &&
-                    h.IsAlive &&
-                    h.IsNoble &&
-                    h.IsActive &&
-                    h.Spouse is null &&
-                    IsMaidenAllowedForMarriageByConfig(hero, h) &&
-                    Campaign.Current.Models.MarriageModel.IsCoupleSuitableForMarriage(hero, h))
+                .Where(h => h.IsFemale
+                         && h.IsAlive
+                         && h.IsNoble
+                         && h.IsActive
+                         && h.Spouse is null
+                         && IsMaidenAllowedForMarriageByConfig(hero, h)
+                         && marriageModel!.IsCoupleSuitableForMarriage(hero, h))
                 .OrderByDescending(h => GetNobleMatchScore(hero, h))
                 .FirstOrDefault();
 
@@ -129,7 +128,7 @@ namespace HousesCalradia
                 Util.Log.Print(spawnMsg + $" Spawning wife{chanceStr}...");
                 marriageType = " (spawned)";
 
-                int wifeAgeMin = Campaign.Current.Models.MarriageModel.MinimumMarriageAgeFemale;
+                int wifeAgeMin = marriageModel!.MinimumMarriageAgeFemale;
                 int wifeAgeMax = Math.Min(maxAgeFemale - 5, wifeAgeMin + 5);
 
                 wife = HeroUtil.SpawnNoble(hero.Clan, wifeAgeMin, wifeAgeMax, isFemale: true);
@@ -149,12 +148,11 @@ namespace HousesCalradia
         }
 
         private int GetClanFitness(Clan clan) => clan.Lords
-            .Where(h =>
-                !h.IsFemale &&
-                h.IsAlive &&
-                h.IsActive &&
-                h.Spouse is not null &&
-                (int)h.Spouse.Age <= maxFemaleReproductionAge)
+            .Where(h => !h.IsFemale
+                     && h.IsAlive
+                     && h.IsActive
+                     && h.Spouse is not null
+                     && (int)h.Spouse.Age <= maxFemaleReproductionAge)
             .Count();
 
         private float GetAnnualMarriageChance(int clanFitness) =>
@@ -165,8 +163,15 @@ namespace HousesCalradia
             if (kingdom == suitor.Clan.Kingdom)
                 return true; // Same-kingdom is always allowed
 
-            // From here on, it must be a different kingdom.
-            return !sameKingdomOnly && suitor.Clan != suitor.Clan.Kingdom.RulingClan && !kingdom.IsAtWarWith(suitor.Clan.Kingdom);
+            // From here on, it must be a different kingdom...
+
+            if (sameKingdomOnly)
+                return false;
+
+            if (!Config.AllowDiffKingdomMarriageForRulingClans && suitor.Clan == suitor.Clan.Kingdom.RulingClan)
+                return false;
+
+            return !kingdom.IsAtWarWith(suitor.Clan.Kingdom);
         }
 
         private bool IsMaidenAllowedForMarriageByConfig(Hero suitor, Hero maiden)
@@ -176,24 +181,30 @@ namespace HousesCalradia
             if (age < minAgeFemale || age > maxAgeFemale)
                 return false;
 
+            // Address issues with female clan leaders marrying (short of overriding the entire MarriageModel):
+            if (maiden == maiden.Clan.Leader)
+                return false;
+
             bool sameKingdom = suitor.Clan.Kingdom == maiden.Clan.Kingdom;
 
-            if (!sameKingdom &&
-                maiden.Clan == maiden.Clan.Kingdom.RulingClan)
+            if (!sameKingdom
+                && !Config.AllowDiffKingdomMarriageForRulingClans
+                && maiden.Clan == maiden.Clan.Kingdom.RulingClan)
                 return false;
 
             bool sameCulture = suitor.Culture == maiden.Culture;
 
-            return (sameKingdom && sameCulture) ||
-                (Config.AllowSameKingdomDiffCultureMarriage && sameKingdom) ||
-                (Config.AllowDiffKingdomSameCultureMarriage && sameCulture) ||
-                (Config.AllowDiffKingdomDiffCultureMarriage && !sameKingdom && !sameCulture);
+            return sameKingdom && sameCulture ||
+                Config.AllowSameKingdomDiffCultureMarriage && sameKingdom ||
+                Config.AllowDiffKingdomSameCultureMarriage && sameCulture ||
+                Config.AllowDiffKingdomDiffCultureMarriage && !sameKingdom && !sameCulture;
         }
 
         private float GetNobleMatchScore(Hero suitor, Hero maiden) =>
-            (maiden.Clan.Kingdom == suitor.Clan.Kingdom ? 8000 : 0) +
-            (maiden.Culture == suitor.Culture ? 4000 : 0) -
-            maiden.Age;
+              (maiden.Clan.Kingdom == suitor.Clan.Kingdom ? 8000 : 0)
+            + (maiden.Culture == suitor.Culture ? 4000 : 0)
+            + diplomacyModel!.GetEffectiveRelation(maiden, suitor) / 10f // [-10;10]
+            - maiden.Age;
 
         private string GetHeroTrace(Hero h, int clanFitness = -1)
         {
@@ -203,8 +214,10 @@ namespace HousesCalradia
 
         private void SetParameters()
         {
-            minAgeMale = Math.Max(Config.MinMaleMarriageAge, Campaign.Current.Models.MarriageModel.MinimumMarriageAgeMale);
-            minAgeFemale = Math.Max(Config.MinFemaleMarriageAge, Campaign.Current.Models.MarriageModel.MinimumMarriageAgeFemale);
+            diplomacyModel = Campaign.Current.Models.DiplomacyModel;
+            marriageModel = Campaign.Current.Models.MarriageModel;
+            minAgeMale = Math.Max(Config.MinMaleMarriageAge, marriageModel.MinimumMarriageAgeMale);
+            minAgeFemale = Math.Max(Config.MinFemaleMarriageAge, marriageModel.MinimumMarriageAgeFemale);
             maxAgeFemale = Math.Max(minAgeFemale + 1, Config.MaxFemaleMarriageAge);
             daysPerHumanYear = GetDaysPerHumanYear();
 
@@ -227,29 +240,19 @@ namespace HousesCalradia
         {
             int ret = daysPerHumanYearDefault;
 
-            // First, see if Pacemaker is also loaded, and if so, get a handle to it.
-            var pacemakerAsm = AppDomain.CurrentDomain.GetAssemblies().SingleOrDefault(a => a.GetName().Name == "Pacemaker");
-
-            if (pacemakerAsm is null)
-                return ret;
-
-            // Let's dig into the Pacemaker types, namely Pacemaker.Export
-            var api = pacemakerAsm.ExportedTypes?.SingleOrDefault(t => t.FullName == "Pacemaker.Export");
-
-            if (api is null)
-                return ret;
-
-            var apiMethod = api.GetMethod("GetDaysPerHumanYear");
+            // Try to find Pacemaker.Export.GetDaysPerHumanYear(bool isAdult) from Pacemaker.dll
+            var apiMethod = AppDomain.CurrentDomain.GetAssemblies()
+                .SingleOrDefault(a => a.GetName().Name == "Pacemaker")?.ExportedTypes
+                .SingleOrDefault(t => t.FullName == "Pacemaker.Export")?.GetMethod("GetDaysPerHumanYear");
 
             if (apiMethod is not null)
                 ret = (int)Math.Round((float)apiMethod.Invoke(null, new object[] { true }));
 
-            if (ret <= 0)
-                ret = 1;
-
-            return ret;
+            return ret <= 0 ? 1 : ret;
         }
 
+        private DiplomacyModel? diplomacyModel;
+        private MarriageModel? marriageModel;
         private bool sameKingdomOnly;
         private int minAgeMale;
         private int minAgeFemale;

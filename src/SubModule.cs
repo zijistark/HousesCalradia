@@ -19,8 +19,8 @@ namespace HousesCalradia
          */
         public static readonly int SemVerMajor = 1;
         public static readonly int SemVerMinor = 2;
-        public static readonly int SemVerPatch = 0;
-        public static readonly string? SemVerSpecial = null;
+        public static readonly int SemVerPatch = 1;
+        public static readonly string? SemVerSpecial = "beta1";
         private static readonly string SemVerEnd = (SemVerSpecial is null) ? string.Empty : "-" + SemVerSpecial;
         public static readonly string Version = $"{SemVerMajor}.{SemVerMinor}.{SemVerPatch}{SemVerEnd}";
 

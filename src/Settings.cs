@@ -17,11 +17,15 @@ namespace HousesCalradia
 
         private const string AllowDiffKingdomSameCultureMarriage_Hint = "Allow marriages between different kingdoms if " +
             "the couple shares the same culture. Same-kingdom pairings will still always be preferred. Excludes ruling " +
-            "clans. [ Default: ON ]";
+            "clans unless that setting is enabled. [ Default: ON ]";
 
         private const string AllowDiffKingdomDiffCultureMarriage_Hint = "Allow marriages between different kingdoms " +
             "even if the couple doesn't share the same culture. Same-kingdom and/or same-culture pairings will still " +
-            "always be preferred. Excludes ruling clans. [ Default: OFF ]";
+            "always be preferred. Excludes ruling clans unless that setting is enabled. [ Default: OFF ]";
+
+        private const string AllowDiffKingdomMarriageForRulingClans_Hint = "Allow kingdom rulers' clans to marry " +
+            "into families in different kingdoms in whichever cases different-kingdom marriage is allowed (if any). " +
+            "[ Default: ON ]";
 
         private const string SpawnNobleWives_Hint = "If there are no eligible noble candidates and their clan " +
             "desperately needs a marriage to survive, allow nobles a chance to marry a spawned spouse of " +
@@ -58,6 +62,10 @@ namespace HousesCalradia
         [SettingPropertyBool("Allow Different-Kingdom, Different-Culture Marriage", HintText = AllowDiffKingdomDiffCultureMarriage_Hint, RequireRestart = false, Order = 2)]
         [SettingPropertyGroup("AI Noble Marriage")]
         public bool AllowDiffKingdomDiffCultureMarriage { get; set; } = Config.AllowDiffKingdomDiffCultureMarriage;
+
+        [SettingPropertyBool("Allow Different-Kingdom Marriages for Ruling Clans", HintText = AllowDiffKingdomMarriageForRulingClans_Hint, RequireRestart = false, Order = 3)]
+        [SettingPropertyGroup("AI Noble Marriage")]
+        public bool AllowDiffKingdomMarriageForRulingClans { get; set; } = Config.AllowDiffKingdomMarriageForRulingClans;
 
         // public bool EnableMinorFactionMarriage { get; set; } = true;
 
