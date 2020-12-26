@@ -40,8 +40,9 @@ namespace HousesCalradia.Patches
                 clan.Kingdom.IsEliminated ||
                 clan.IsClanTypeMercenary ||
                 // Start extreme paranoia:
-                clan.IsRebelFaction ||
+                clan.IsRebelClan ||
                 clan.IsBanditFaction ||
+                clan == CampaignData.NeutralFaction ||
                 // End extreme paranoia!
                 clan.Lords.Where(h => h.IsAlive && !h.IsChild && h.IsActive && h.IsNoble && h != victim).Any())
             {
@@ -61,7 +62,7 @@ namespace HousesCalradia.Patches
                 $"{victim.Name} of age {victim.Age:F0}, died without a valid heir (reason: {deathReasonStr})!");
 
             // Spawn a male noble "distant relative" into the clan
-            var ageMin = Campaign.Current.Models.AgeModel.HeroComesOfAge + 1;
+            var ageMin = Math.Max(22, Campaign.Current.Models.AgeModel.HeroComesOfAge + 1);
             var successor = HeroUtil.SpawnNoble(clan, ageMin, ageMax: ageMin + 10, isFemale: MBRandom.RandomFloat < 0.5);
 
             if (successor is null)
