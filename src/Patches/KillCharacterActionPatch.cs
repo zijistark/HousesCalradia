@@ -40,7 +40,7 @@ namespace HousesCalradia.Patches
                 clan.Kingdom.IsEliminated ||
                 clan.IsClanTypeMercenary ||
                 // Start extreme paranoia:
-                clan.IsRebelClan ||
+                clan.IsRebelFaction ||
                 clan.IsBanditFaction ||
                 clan == CampaignData.NeutralFaction ||
                 // End extreme paranoia!
