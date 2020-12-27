@@ -42,7 +42,8 @@ namespace HousesCalradia
                 (int)hero.Age < minAgeMale ||
                 !marriageModel!.IsSuitableForMarriage(hero) ||
                 hero.Clan.IsClanTypeMercenary ||
-                hero.Clan == Clan.PlayerClan)
+                hero.Clan == Clan.PlayerClan ||
+                hero.Clan == CampaignData.NeutralFaction)
             {
                 return;
             }
@@ -65,6 +66,7 @@ namespace HousesCalradia
                 .SelectMany(k => k.Clans)
                 .Where(c => !c.IsEliminated
                          && !c.IsClanTypeMercenary
+                         && c != CampaignData.NeutralFaction
                          && c != Clan.PlayerClan)
                 .SelectMany(c => c.Lords)
                 .Where(h => h.IsFemale
