@@ -10,7 +10,7 @@ namespace HousesCalradia
     internal sealed class Log : LogBase
     {
         private const string BeginMultiLine = @"=======================================================================================================================\";
-        private const string EndMultiLine   = @"=======================================================================================================================/";
+        private const string EndMultiLine = @"=======================================================================================================================/";
 
         public readonly string LogDir;
         public readonly string LogFile;

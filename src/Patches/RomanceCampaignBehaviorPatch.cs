@@ -12,6 +12,11 @@ namespace HousesCalradia.Patches
     [HarmonyPatch(typeof(RomanceCampaignBehavior))]
     internal static class RomanceCampaignBehaviorPatch
     {
+        internal static class ReferenceStuff
+        {
+            internal static bool DontReally() => CheckNpcMarriages(Clan.PlayerClan);
+        }
+
         [HarmonyPrefix]
         [HarmonyPriority(Priority.VeryHigh)]
         [HarmonyPatch("CheckNpcMarriages")]

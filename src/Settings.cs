@@ -9,7 +9,7 @@ namespace HousesCalradia
         public override string Id => $"{SubModule.Name}_v1";
         public override string DisplayName => SubModule.DisplayName;
         public override string FolderName => SubModule.Name;
-        public override string FormatType => "json2";
+        public override string Format => "json";
 
         private const string AllowSameKingdomDiffCultureMarriage_Hint = "Allow marriages within the same kingdom with a " +
             "noble of a different culture. Note that same-kingdom, same-culture marriages are always allowed, and " +
