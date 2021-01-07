@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>1.2.2</Version>
+    <Version>1.2.3</Version>
     <GameFolder>$(BANNERLORD_GAME_DIR)</GameFolder>
     <ModuleName>$(AssemblyName)</ModuleName>
     <TargetFramework>net472</TargetFramework>
@@ -16,7 +16,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Bannerlord.MCM" Version="4.1.2" />
+    <PackageReference Include="Bannerlord.MCM" Version="3.1.9" />
     <PackageReference Include="Lib.Harmony" Version="2.0.4" />
   </ItemGroup>
 
@@ -44,4 +44,5 @@
       <Private>False</Private>
     </Reference>
   </ItemGroup>
+
 </Project>

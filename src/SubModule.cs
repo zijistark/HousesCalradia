@@ -19,7 +19,7 @@ namespace HousesCalradia
          */
         public static readonly int SemVerMajor = 1;
         public static readonly int SemVerMinor = 2;
-        public static readonly int SemVerPatch = 2;
+        public static readonly int SemVerPatch = 3;
         public static readonly string? SemVerSpecial = null;
         private static readonly string SemVerEnd = (SemVerSpecial is null) ? string.Empty : "-" + SemVerSpecial;
         public static readonly string Version = $"{SemVerMajor}.{SemVerMinor}.{SemVerPatch}{SemVerEnd}";
@@ -43,18 +43,26 @@ namespace HousesCalradia
             if (!hasLoaded)
             {
                 Util.Log.Print($"Loading {DisplayName}...");
+                bool usedMcm = false;
 
-                if (Settings.Instance is { } settings)
+                try
                 {
-                    Util.Log.Print("MCM settings instance found!");
+                    if (Settings.Instance is { } settings)
+                    {
+                        Util.Log.Print("MCM settings instance found!");
 
-                    // Copy current settings to master config
-                    Config.CopyFromSettings(settings);
+                        // Copy current settings to master config
+                        Config.CopyFromSettings(settings);
 
-                    // Register for settings property-changed events
-                    settings.PropertyChanged += Settings_OnPropertyChanged;
+                        // Register for settings property-changed events
+                        settings.PropertyChanged += Settings_OnPropertyChanged;
+
+                        usedMcm = true;
+                    }
                 }
-                else
+                catch (System.Exception) { }
+
+                if (!usedMcm)
                     Util.Log.Print("MCM settings instance NOT found! Using defaults.");
 
                 Util.Log.Print("\nConfiguration:");
