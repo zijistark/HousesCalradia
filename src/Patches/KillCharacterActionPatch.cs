@@ -12,9 +12,9 @@ namespace HousesCalradia.Patches
     [HarmonyPatch(typeof(KillCharacterAction))]
     internal sealed class KillCharacterActionPatch
     {
-        internal static class ReferenceStuff
+        internal static class ForOptimizer
         {
-            internal static void DontReally() => ApplyInternalPrefix(null!, null!, KillCharacterAction.KillCharacterActionDetail.None, true);
+            internal static void DoApplyInternalPrefix() => ApplyInternalPrefix(null!, null!, KillCharacterAction.KillCharacterActionDetail.None, true);
         }
 
         [HarmonyPrefix]
@@ -40,7 +40,11 @@ namespace HousesCalradia.Patches
                 clan.Kingdom.IsEliminated ||
                 clan.IsClanTypeMercenary ||
                 // Start extreme paranoia:
+#if STABLE
+                clan.IsRebelFaction ||
+#else
                 clan.IsRebelClan ||
+#endif
                 clan.IsBanditFaction ||
                 clan == CampaignData.NeutralFaction ||
                 // End extreme paranoia!

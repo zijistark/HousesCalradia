@@ -1,5 +1,7 @@
 ﻿using HarmonyLib;
 
+using System.Runtime.CompilerServices;
+
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.SandBox.CampaignBehaviors;
 
@@ -12,14 +14,15 @@ namespace HousesCalradia.Patches
     [HarmonyPatch(typeof(RomanceCampaignBehavior))]
     internal static class RomanceCampaignBehaviorPatch
     {
-        internal static class ReferenceStuff
+        internal static class ForOptimizer
         {
-            internal static bool DontReally() => CheckNpcMarriages(Clan.PlayerClan);
+            internal static void DoCheckNpcMarriagesPrefix() => CheckNpcMarriagesPrefix(Clan.PlayerClan);
         }
 
         [HarmonyPrefix]
         [HarmonyPriority(Priority.VeryHigh)]
         [HarmonyPatch("CheckNpcMarriages")]
-        private static bool CheckNpcMarriages(Clan consideringClan) => false;
+        [MethodImpl(MethodImplOptions.NoOptimization)]
+        private static bool CheckNpcMarriagesPrefix(Clan consideringClan) => false;
     }
 }

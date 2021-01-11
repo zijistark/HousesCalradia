@@ -1,23 +1,27 @@
 ﻿<Module>
   <Name value="Houses of Calradia"/>
-  <Id value="HousesCalradia"/>
-  <Version value="v$version$" />
+  <Id value="$modulename$"/>
+  <Version value="v$version$"/>
+  <Url value="https://www.nexusmods.com/mountandblade2bannerlord/mods/2174" />
   <SingleplayerModule value="true"/>
   <MultiplayerModule value="false"/>
-  <Url value="https://www.nexusmods.com/mountandblade2bannerlord/mods/2174" />
   <DependedModules>
     <DependedModule Id="Native"/>
     <DependedModule Id="SandBoxCore"/>
     <DependedModule Id="Sandbox"/>
-    <DependedModule Id="StoryMode" />
+    <DependedModule Id="StoryMode"/>
   </DependedModules>
+  <DependedModuleMetadatas>
+    <DependedModuleMetadata id="Bannerlord.MBOptionScreen" order="LoadBeforeThis" version="v4.1.2" optional="true"/>
+    <DependedModuleMetadata id="Bannerlord.MBOptionScreen.MCMv3" order="LoadBeforeThis" version="v4.1.2" optional="true"/>
+  </DependedModuleMetadatas>
   <SubModules>
     <SubModule>
       <Name value="Houses of Calradia"/>
-      <DLLName value="HousesCalradia.dll"/>
-      <SubModuleClassType value="HousesCalradia.SubModule"/>
+      <DLLName value="$modulename$.dll"/>
+      <SubModuleClassType value="$modulename$.SubModule"/>
       <Tags />
     </SubModule>
   </SubModules>
-  <Xmls/>
+  <Xmls />
 </Module>

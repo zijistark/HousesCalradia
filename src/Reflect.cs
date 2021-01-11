@@ -1,7 +1,7 @@
-﻿using System;
-using System.Reflection;
+﻿using HarmonyLib;
 
-using HarmonyLib;
+using System;
+using System.Reflection;
 
 namespace HousesCalradia
 {

@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-using TaleWorlds.MountAndBlade.CustomBattle.CustomBattle;
-
 namespace HousesCalradia
 {
     internal sealed class Log : LogBase
