@@ -23,6 +23,10 @@ namespace HousesCalradia.Patches
         [HarmonyPriority(Priority.VeryHigh)]
         [HarmonyPatch("CheckNpcMarriages")]
         [MethodImpl(MethodImplOptions.NoOptimization)]
-        private static bool CheckNpcMarriagesPrefix(Clan consideringClan) => false;
+        private static bool CheckNpcMarriagesPrefix(Clan? consideringClan)
+        {
+            _ = consideringClan;
+            return false;
+        }
     }
 }

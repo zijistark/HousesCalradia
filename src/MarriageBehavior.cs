@@ -22,10 +22,6 @@ namespace HousesCalradia
 
         private void OnDailyHeroTick(Hero hero)
         {
-            // Very early exit conditions:
-            if (hero.IsFemale || !hero.IsNoble)
-                return;
-
             // We only evaluate marriage once per human year, and we use an offset to distribute hero
             // marriages more evenly throughout that year:
             int daysOffset = hero.Id.GetHashCode() % daysPerHumanYear;
@@ -36,18 +32,8 @@ namespace HousesCalradia
                 return;
 
             // Does this hero even qualify for a marriage evaluation?
-            if (hero.IsDead ||
-                !hero.IsActive ||
-                hero.Clan is null ||
-                hero.Clan.Kingdom is null ||
-                (int)hero.Age < minAgeMale ||
-                !marriageModel!.IsSuitableForMarriage(hero) ||
-                hero.Clan.IsClanTypeMercenary ||
-                hero.Clan == Clan.PlayerClan ||
-                hero.Clan == CampaignData.NeutralFaction)
-            {
+            if (!SuitorQualifiesForNobleMarriageSystem(hero))
                 return;
-            }
 
             var clanFitness = GetClanFitness(hero.Clan);
             var marriageChance = GetAnnualMarriageChance(clanFitness);
@@ -61,25 +47,7 @@ namespace HousesCalradia
             }
 
             // Find eligible candidates for marriage in order of preference
-            var wife = Kingdom.All
-                .Where(k => !k.IsEliminated
-                         && IsKingdomAllowedForMarriageByConfig(hero, k))
-                .SelectMany(k => k.Clans)
-                .Where(c => !c.IsEliminated
-                         && !c.IsClanTypeMercenary
-                         && c != CampaignData.NeutralFaction
-                         && c != Clan.PlayerClan)
-                .SelectMany(c => c.Lords)
-                .Where(h => h.IsFemale
-                         && h.IsAlive
-                         && h.IsNoble
-                         && h.IsActive
-                         && h.Spouse is null
-                         && IsMaidenAllowedForMarriageByConfig(hero, h)
-                         && marriageModel!.IsCoupleSuitableForMarriage(hero, h))
-                .OrderByDescending(h => GetNobleMatchScore(hero, h))
-                .FirstOrDefault();
-
+            var wife = FindBestNobleMaiden(hero);
             var marriageType = string.Empty;
 
             // Were there no eligible female nobles?
@@ -106,8 +74,8 @@ namespace HousesCalradia
                 int childCount = hero.Children.Count();
                 int maleChildCount = hero.Children.Where(h => !h.IsFemale).Count();
 
-                if (clanFitness == 2 && (childCount >= 2 || maleChildCount >= 1 || hero.Age >= 60) ||
-                    clanFitness == 1 && (childCount >= 3 || maleChildCount >= 2 || hero.Age >= 65))
+                if ((clanFitness == 2 && (childCount >= 2 || maleChildCount >= 1 || hero.Age >= 60))
+                    || (clanFitness == 1 && (childCount >= 3 || maleChildCount >= 2 || hero.Age >= 65)))
                 {
                     Util.Log.Print(spawnMsg + " Can't try to spawn wife (clan fitness is too high for our prior children / age).");
                     return;
@@ -150,6 +118,19 @@ namespace HousesCalradia
             MarriageAction.Apply(hero, wife);
         }
 
+        private bool SuitorQualifiesForNobleMarriageSystem(Hero suitor)
+            => !suitor.IsFemale
+            &&  suitor.IsNoble
+            && !suitor.IsDead
+            &&  suitor.IsActive
+            &&  suitor.Clan is not null
+            &&  suitor.Clan.Kingdom is not null
+            &&  (int)suitor.Age >= minAgeMale
+            &&  marriageModel!.IsSuitableForMarriage(suitor)
+            && !suitor.Clan.IsClanTypeMercenary
+            &&  suitor.Clan != Clan.PlayerClan
+            &&  suitor.Clan != CampaignData.NeutralFaction;
+
         private int GetClanFitness(Clan clan) => clan.Lords
             .Where(h => !h.IsFemale
                      && h.IsAlive
@@ -158,8 +139,26 @@ namespace HousesCalradia
                      && (int)h.Spouse.Age <= maxFemaleReproductionAge)
             .Count();
 
-        private float GetAnnualMarriageChance(int clanFitness) =>
-            (float)Math.Pow(2, -clanFitness) * Config.MarriageChanceMult;
+        private float GetAnnualMarriageChance(int clanFitness) => (float)Math.Pow(2, -clanFitness) * Config.MarriageChanceMult;
+
+        private Hero? FindBestNobleMaiden(Hero suitor) => Kingdom.All
+                .Where(k => !k.IsEliminated
+                         && IsKingdomAllowedForMarriageByConfig(suitor, k))
+                .SelectMany(k => k.Clans)
+                .Where(c => !c.IsEliminated
+                         && !c.IsClanTypeMercenary
+                         &&  c != CampaignData.NeutralFaction
+                         &&  c != Clan.PlayerClan)
+                .SelectMany(c => c.Lords)
+                .Where(h => h.IsFemale
+                         && h.IsAlive
+                         && h.IsNoble
+                         && h.IsActive
+                         && h.Spouse is null
+                         && IsMaidenAllowedForMarriageByConfig(suitor, h)
+                         && marriageModel!.IsCoupleSuitableForMarriage(suitor, h))
+                .OrderByDescending(h => GetNobleMatchScore(suitor, h))
+                .FirstOrDefault();
 
         private bool IsKingdomAllowedForMarriageByConfig(Hero suitor, Kingdom kingdom)
         {
@@ -168,13 +167,9 @@ namespace HousesCalradia
 
             // From here on, it must be a different kingdom...
 
-            if (sameKingdomOnly)
-                return false;
-
-            if (!Config.AllowDiffKingdomMarriageForRulingClans && suitor.Clan == suitor.Clan.Kingdom.RulingClan)
-                return false;
-
-            return !kingdom.IsAtWarWith(suitor.Clan.Kingdom);
+            return !sameKingdomOnly
+                && (Config.AllowDiffKingdomMarriageForRulingClans || suitor.Clan != suitor.Clan.Kingdom.RulingClan)
+                && !kingdom.IsAtWarWith(suitor.Clan.Kingdom);
         }
 
         private bool IsMaidenAllowedForMarriageByConfig(Hero suitor, Hero maiden)
@@ -197,15 +192,15 @@ namespace HousesCalradia
 
             bool sameCulture = suitor.Culture == maiden.Culture;
 
-            return sameKingdom && sameCulture ||
-                Config.AllowSameKingdomDiffCultureMarriage && sameKingdom ||
-                Config.AllowDiffKingdomSameCultureMarriage && sameCulture ||
-                Config.AllowDiffKingdomDiffCultureMarriage && !sameKingdom && !sameCulture;
+            return (sameKingdom && sameCulture) ||
+                (Config.AllowSameKingdomDiffCultureMarriage && sameKingdom) ||
+                (Config.AllowDiffKingdomSameCultureMarriage && sameCulture) ||
+                (Config.AllowDiffKingdomDiffCultureMarriage && !sameKingdom && !sameCulture);
         }
 
         private float GetNobleMatchScore(Hero suitor, Hero maiden) =>
-              (maiden.Clan.Kingdom == suitor.Clan.Kingdom ? 8000 : 0)
-            + (maiden.Culture == suitor.Culture ? 4000 : 0)
+              ((maiden.Clan.Kingdom == suitor.Clan.Kingdom) ? 8000 : 0)
+            + ((maiden.Culture == suitor.Culture) ? 4000 : 0)
             + diplomacyModel!.GetEffectiveRelation(maiden, suitor) / 10f // [-10;10]
             - maiden.Age;
 
