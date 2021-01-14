@@ -9,11 +9,11 @@ namespace HousesCalradia
     {
         public class Method
         {
-            protected readonly Type Type;
-            protected readonly string Name;
+            public readonly Type Type;
+            public readonly string Name;
             protected readonly Type[]? Parameters;
             protected readonly Type[]? Generics;
-            protected readonly MethodInfo MethodInfo;
+            public readonly MethodInfo MethodInfo;
 
             public Method(Type? type, string name, Type[]? parameters = null, Type[]? generics = null)
             {
@@ -53,7 +53,7 @@ namespace HousesCalradia
 
             protected virtual string MethodType => "method";
 
-            protected virtual string PrettyName => $"{MethodType} {(MethodInfo is null ? Name : MethodInfo.Name)}{GenericsString}{ParametersString}";
+            public virtual string PrettyName => $"{MethodType} {(MethodInfo is null ? Name : MethodInfo.Name)}{GenericsString}{ParametersString}";
 
             protected virtual MethodInfo? ResolveMethodInfo() => AccessTools.Method(Type, Name, Parameters, Generics);
         }
