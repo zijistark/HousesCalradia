@@ -30,6 +30,12 @@ namespace HousesCalradia
 
         internal static readonly Color ImportantTextColor = Color.FromUint(0x00F16D26); // orange
 
+        private static readonly Patch[] HarmonyPatches = new Patch[]
+        {
+            new Patches.RomanceCampaignBehaviorPatch(),
+            new Patches.KillCharacterActionPatch(),
+        };
+
         protected override void OnSubModuleLoad()
         {
             base.OnSubModuleLoad();
@@ -40,42 +46,48 @@ namespace HousesCalradia
         {
             base.OnBeforeInitialModuleScreenSetAsRoot();
 
-            if (!hasLoaded)
+            if (hasLoaded)
+                return;
+
+            Util.Log.Print($"Loading {DisplayName}...");
+            bool usedMcm = false;
+
+            try
             {
-                Util.Log.Print($"Loading {DisplayName}...");
-                bool usedMcm = false;
-
-                try
+                if (Settings.Instance is { } settings)
                 {
-                    if (Settings.Instance is { } settings)
-                    {
-                        Util.Log.Print("MCM settings instance found!");
+                    Util.Log.Print("MCM settings instance found!");
 
-                        // Copy current settings to master config
-                        Config.CopyFromSettings(settings);
+                    // Copy current settings to master config
+                    Config.CopyFromSettings(settings);
 
-                        // Register for settings property-changed events
-                        settings.PropertyChanged += Settings_OnPropertyChanged;
+                    // Register for settings property-changed events
+                    settings.PropertyChanged += Settings_OnPropertyChanged;
 
-                        usedMcm = true;
-                    }
+                    usedMcm = true;
                 }
-                catch (System.Exception) { }
-
-                if (!usedMcm)
-                    Util.Log.Print("MCM settings instance NOT found! Using defaults.");
-
-                Util.Log.Print("\nConfiguration:");
-                Util.Log.Print(Config.ToStringLines(indentSize: 4));
-                Util.Log.Print(string.Empty);
-
-                var harmony = new Harmony(HarmonyDomain);
-                harmony.PatchAll();
-
-                Util.Log.Print($"Loaded {DisplayName}!\n");
-                InformationManager.DisplayMessage(new InformationMessage($"Loaded {DisplayName}", ImportantTextColor));
-                hasLoaded = true;
             }
+            catch (System.Exception) { }
+
+            if (!usedMcm)
+                Util.Log.Print("MCM settings instance NOT found! Using defaults.");
+
+            Util.Log.Print("\nConfiguration:");
+            Util.Log.Print(Config.ToStringLines(indentSize: 4));
+
+            Util.Log.Print("\nApplying Harmony patches...");
+            var harmony = new Harmony(HarmonyDomain);
+
+            foreach (var patch in HarmonyPatches)
+            {
+                patch.Apply(harmony);
+                Util.Log.Print($"Applied {patch}");
+            }
+
+            Util.Log.Print($"\nLoaded {DisplayName}!\n");
+            InformationManager.DisplayMessage(new InformationMessage($"Loaded {DisplayName}", ImportantTextColor));
+
+            hasLoaded = true;
         }
 
         protected override void OnGameStart(Game game, IGameStarter starterObject)
