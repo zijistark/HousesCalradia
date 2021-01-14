@@ -208,10 +208,10 @@ namespace HousesCalradia
 
             bool sameCulture = suitor.Culture == maiden.Culture;
 
-            return (sameKingdom && sameCulture) ||
-                (Config.AllowSameKingdomDiffCultureMarriage && sameKingdom) ||
-                (Config.AllowDiffKingdomSameCultureMarriage && sameCulture) ||
-                (Config.AllowDiffKingdomDiffCultureMarriage && !sameKingdom && !sameCulture);
+            return (sameKingdom && sameCulture)
+                || (Config.AllowSameKingdomDiffCultureMarriage && sameKingdom)
+                || (Config.AllowDiffKingdomSameCultureMarriage && sameCulture)
+                || (Config.AllowDiffKingdomDiffCultureMarriage && !sameKingdom && !sameCulture);
         }
 
         private float GetNobleMatchScore(Hero suitor, Hero maiden) =>
@@ -233,9 +233,8 @@ namespace HousesCalradia
             minAgeMale = Math.Max(Config.MinMaleMarriageAge, marriageModel.MinimumMarriageAgeMale);
             minAgeFemale = Math.Max(Config.MinFemaleMarriageAge, marriageModel.MinimumMarriageAgeFemale);
             maxAgeFemale = Math.Max(minAgeFemale + 1, Config.MaxFemaleMarriageAge);
-            daysPerHumanYear = GetDaysPerHumanYear();
-
             sameKingdomOnly = !Config.AllowDiffKingdomSameCultureMarriage && !Config.AllowDiffKingdomDiffCultureMarriage;
+            daysPerHumanYear = GetDaysPerHumanYear();
 
             var trace = new List<string>
             {
