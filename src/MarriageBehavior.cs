@@ -217,7 +217,7 @@ namespace HousesCalradia
         private float GetNobleMatchScore(Hero suitor, Hero maiden) =>
               ((maiden.Clan.Kingdom == suitor.Clan.Kingdom) ? 8000 : 0)
             + ((maiden.Culture == suitor.Culture) ? 4000 : 0)
-            + diplomacyModel!.GetEffectiveRelation(maiden, suitor) / 10f // [-10;10]
+            + diplomacyModel!.GetEffectiveRelation(maiden, suitor) / 20f // [-5;5]
             - maiden.Age;
 
         private string GetHeroTrace(Hero h, int clanFitness = -1)
