@@ -1,6 +1,5 @@
-﻿using HarmonyLib;
+﻿using System.Runtime.CompilerServices;
 
-using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.SandBox.CampaignBehaviors;
 
 namespace HousesCalradia.Patches
@@ -14,12 +13,10 @@ namespace HousesCalradia.Patches
         private static readonly Reflect.Method<RomanceCampaignBehavior> TargetMethod = new("CheckNpcMarriages");
         private static readonly Reflect.Method<RomanceCampaignBehaviorPatch> PatchMethod = new(nameof(CheckNpcMarriagesPrefix));
 
-        internal RomanceCampaignBehaviorPatch() : base(Type.Prefix, TargetMethod, PatchMethod, HarmonyLib.Priority.HigherThanNormal) { }
+        internal RomanceCampaignBehaviorPatch()
+            : base(Type.Prefix, TargetMethod, PatchMethod, HarmonyLib.Priority.HigherThanNormal) { }
 
-        private static bool CheckNpcMarriagesPrefix(Clan consideringClan)
-        {
-            _ = consideringClan;
-            return false;
-        }
+        [MethodImpl(MethodImplOptions.NoOptimization)]
+        private static bool CheckNpcMarriagesPrefix() => false;
     }
 }

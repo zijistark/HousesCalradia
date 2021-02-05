@@ -1,6 +1,4 @@
-﻿using HarmonyLib;
-
-using System;
+﻿using System;
 using System.Linq;
 
 using TaleWorlds.CampaignSystem;
@@ -29,11 +27,8 @@ namespace HousesCalradia.Patches
 
         private static void ApplyInternalPrefix(Hero? victim,
                                                 Hero? killer,
-                                                KillCharacterAction.KillCharacterActionDetail actionDetail,
-                                                bool showNotification)
+                                                KillCharacterAction.KillCharacterActionDetail actionDetail)
         {
-            _ = showNotification;
-
             // Only interested in the death of regular clan leaders where there's no other adult noble to succeed them:
             if (victim is null || IsClanExtinctionPreventionDisallowed(victim.Clan, victim))
                 return;
