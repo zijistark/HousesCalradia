@@ -4,6 +4,9 @@ using System.Linq;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
 
+// TODO: Once e1.5.8 becomes stable, switch most of the RandomPick() calls to GetRandomElementWithPredicate()
+//       No big deal, but using the predicate method on IReadOnlyList<T> is indeed a faster approach in many cases.
+
 namespace HousesCalradia
 {
     internal static class HeroUtil
@@ -16,8 +19,8 @@ namespace HousesCalradia
                     && h.CharacterObject.Occupation == Occupation.Lord
                     && h.IsFemale == isFemale);
 
-            var mainTemplate = mainTemplateSeq.Where(h => h.Culture == clan.Culture).GetRandomElement()
-                ?? mainTemplateSeq.GetRandomElement();
+            var mainTemplate = mainTemplateSeq.Where(h => h.Culture == clan.Culture).RandomPick()
+                ?? mainTemplateSeq.RandomPick();
 
             if (mainTemplate is null)
                 return null; // If we couldn't find a single one, we're screwed. Luckily this is basically a never-condition in any working setup.
@@ -26,9 +29,9 @@ namespace HousesCalradia
             // The auxiliary template doesn't need to be a proper Lord.
             var auxTemplateSeq = Hero.All.Where(h => h.IsNoble && h != mainTemplate);
 
-            var auxTemplate = auxTemplateSeq.Where(h => h.Culture == clan.Culture && h.IsFemale != isFemale).GetRandomElement()
-                ?? auxTemplateSeq.Where(h => h.Culture == clan.Culture).GetRandomElement()
-                ?? auxTemplateSeq.GetRandomElement()
+            var auxTemplate = auxTemplateSeq.Where(h => h.Culture == clan.Culture && h.IsFemale != isFemale).RandomPick()
+                ?? auxTemplateSeq.Where(h => h.Culture == clan.Culture).RandomPick()
+                ?? auxTemplateSeq.RandomPick()
                 ?? mainTemplate;
 
             // Nail down that intended age
@@ -97,17 +100,22 @@ namespace HousesCalradia
             var equipSoldier = equipSoldierSeq
                 .Where(c => TroopHasPreferredFormationClass(c)
                     && c.Culture == hero.Culture
-                    && c.IsFemale == isFemale).GetRandomElement();
+                    && c.IsFemale == isFemale).RandomPick();
 
-            equipSoldier ??= equipSoldierSeq.Where(c => TroopHasPreferredFormationClass(c) && c.Culture == hero.Culture).GetRandomElement();
-            equipSoldier ??= equipSoldierSeq.Where(c => c.Culture == hero.Culture && c.IsFemale == isFemale).GetRandomElement();
-            equipSoldier ??= equipSoldierSeq.Where(c => c.Culture == hero.Culture).GetRandomElement();
-            equipSoldier ??= equipSoldierSeq.Where(c => TroopHasPreferredFormationClass(c) && c.IsFemale == isFemale).GetRandomElement();
-            equipSoldier ??= equipSoldierSeq.Where(c => TroopHasPreferredFormationClass(c)).GetRandomElement();
-            equipSoldier ??= equipSoldierSeq.GetRandomElement();
+            equipSoldier ??= equipSoldierSeq.Where(c => TroopHasPreferredFormationClass(c) && c.Culture == hero.Culture).RandomPick();
+            equipSoldier ??= equipSoldierSeq.Where(c => c.Culture == hero.Culture && c.IsFemale == isFemale).RandomPick();
+            equipSoldier ??= equipSoldierSeq.Where(c => c.Culture == hero.Culture).RandomPick();
+            equipSoldier ??= equipSoldierSeq.Where(c => TroopHasPreferredFormationClass(c) && c.IsFemale == isFemale).RandomPick();
+            equipSoldier ??= equipSoldierSeq.Where(c => TroopHasPreferredFormationClass(c)).RandomPick();
+            equipSoldier ??= equipSoldierSeq.RandomPick();
 
-            if (equipSoldier?.BattleEquipments.GetRandomElement() is { } equip)
+#if STABLE
+            if (equipSoldier?.BattleEquipments.RandomPick() is Equipment equip)
                 hero.BattleEquipment.FillFrom(equip);
+#else
+            if (equipSoldier?.RandomBattleEquipment is Equipment equip)
+                hero.BattleEquipment.FillFrom(equip);
+#endif
 
             // All done!
             hero.ChangeState(Hero.CharacterStates.Active);
