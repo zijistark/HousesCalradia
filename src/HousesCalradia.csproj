@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>1.2.6</Version>
+    <Version>1.2.7</Version>
     <ModuleName>$(MSBuildProjectName)</ModuleName>
   </PropertyGroup>
   
@@ -18,13 +18,13 @@
     <BuildResourcesVersion>1.0.0.33</BuildResourcesVersion>
     <HarmonyVersion>2.0.4</HarmonyVersion>
     <MCMVersion>3.1.9</MCMVersion>
-    <ExternalMCMVersion>4.1.2</ExternalMCMVersion>
+    <ExternalMCMVersion>4.1.2.7</ExternalMCMVersion>
   </PropertyGroup>
 
   <!-- Game Versions for Stable and Beta -->
   <PropertyGroup>
-    <GameVersion Condition="$(IsStable) == 'true'">1.5.7</GameVersion>
-    <GameVersion Condition="$(IsBeta) == 'true'">1.5.8</GameVersion>
+    <GameVersion Condition="$(IsStable) == 'true'">1.5.8</GameVersion>
+    <GameVersion Condition="$(IsBeta) == 'true'">1.5.9</GameVersion>
   </PropertyGroup>
 
   <!-- Game Folder(s) -->

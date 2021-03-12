@@ -11,22 +11,13 @@ namespace HousesCalradia
 {
     public class SubModule : MBSubModuleBase
     {
-        /* Semantic Versioning (https://semver.org)
-         *
-         * In the case of your usual mod, "breaking API compatibility" (major version increment) is save-incompatibility
-         * with itself with respect to the prior version. However, if the mod talks to others, that's an actual API too.
-         * The rest of the version components function as usual.
-         */
-        public static readonly int SemVerMajor = 1;
-        public static readonly int SemVerMinor = 2;
-        public static readonly int SemVerPatch = 6;
-        public static readonly string? SemVerSpecial = null;
-        private static readonly string SemVerEnd = (SemVerSpecial is null) ? string.Empty : "-" + SemVerSpecial;
-        public static readonly string Version = $"{SemVerMajor}.{SemVerMinor}.{SemVerPatch}{SemVerEnd}";
+        public static string Version => "1.2.7";
 
-        public static readonly string Name = typeof(SubModule).Namespace;
-        public static readonly string DisplayName = "Houses of Calradia"; // to be shown to humans in-game
-        public static readonly string HarmonyDomain = "com.zijistark.bannerlord." + Name.ToLower();
+        public static string Name => typeof(SubModule).Namespace;
+
+        public static string DisplayName => "Houses of Calradia"; // to be shown to humans in-game
+
+        public static string HarmonyDomain => "com.zijistark.bannerlord." + Name.ToLower();
 
         internal static readonly Color ImportantTextColor = Color.FromUint(0x00F16D26); // orange
 

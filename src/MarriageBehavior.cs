@@ -130,7 +130,6 @@ namespace HousesCalradia
                 return null;
             }
 
-            wife.IsFertile = true;
             return wife;
         }
 
