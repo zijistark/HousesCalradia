@@ -11,7 +11,7 @@ namespace HousesCalradia
 {
     public class SubModule : MBSubModuleBase
     {
-        public static string Version => "1.2.8";
+        public static string Version => "1.2.9";
 
         public static string Name => typeof(SubModule).Namespace;
 

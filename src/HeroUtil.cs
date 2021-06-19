@@ -4,8 +4,6 @@ using System.Linq;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
 
-// TODO: Once e1.5.8 becomes stable, switch most of the RandomPick() calls to GetRandomElementWithPredicate()
-//       No big deal, but using the predicate method on IReadOnlyList<T> is indeed a faster approach in many cases.
 
 namespace HousesCalradia
 {
@@ -14,7 +12,11 @@ namespace HousesCalradia
         public static Hero? SpawnNoble(Clan clan, int ageMin, int ageMax = -1, bool isFemale = false)
         {
             // Select a main template hero, which must be a Lord
+#if STABLE
             var mainTemplateSeq = Hero.All
+#else
+            var mainTemplateSeq = Hero.AllAliveHeroes.Concat(Hero.DeadOrDisabledHeroes)
+#endif
                 .Where(h => h.IsNoble
                     && h.CharacterObject.Occupation == Occupation.Lord
                     && h.IsFemale == isFemale);
@@ -27,7 +29,13 @@ namespace HousesCalradia
 
             // Select a different auxiliary template to use for cross-pollination of randomized facial appearance, if possible.
             // The auxiliary template doesn't need to be a proper Lord.
-            var auxTemplateSeq = Hero.All.Where(h => h.IsNoble && h != mainTemplate);
+
+#if STABLE
+            var auxTemplateSeq = Hero.All
+#else
+            var auxTemplateSeq = Hero.AllAliveHeroes.Concat(Hero.DeadOrDisabledHeroes)
+#endif
+                .Where(h => h.IsNoble && h != mainTemplate);
 
             var auxTemplate = auxTemplateSeq.Where(h => h.Culture == clan.Culture && h.IsFemale != isFemale).RandomPick()
                 ?? auxTemplateSeq.Where(h => h.Culture == clan.Culture).RandomPick()
@@ -45,7 +53,11 @@ namespace HousesCalradia
                 supporterOfClan: clan,
                 age: age);
 
+#if STABLE
             hero.Name = hero.FirstName;
+#else
+            hero.SetName(hero.FirstName);
+#endif
             hero.IsNoble = true;
 
             // Randomize face/body parameters by simulating a cross between our main template
@@ -58,13 +70,24 @@ namespace HousesCalradia
             // the learning limit for the character. No special methodology here.
 
             // Attributes
+
+#if STABLE
             for (var attr = CharacterAttributesEnum.First; attr < CharacterAttributesEnum.End; ++attr)
                 hero.SetAttributeValue(attr, MBRandom.RandomInt(6, 8));
+#else
+            foreach (var attr in Attributes.All)
+                if (hero.GetAttributeValue(attr) < 4)
+                    hero.HeroDeveloper.AddAttribute(attr, 7, false);
+#endif
 
             // Skills: level & focus point minimums
             const int MinRidingSkill = 100;
 
+#if STABLE
             foreach (var skillObj in Game.Current.SkillList)
+#else
+            foreach (var skillObj in Skills.All)
+#endif
             {
                 var curSkill = hero.GetSkillValue(skillObj);
                 var curFocus = hero.HeroDeveloper.GetFocus(skillObj);
@@ -109,13 +132,8 @@ namespace HousesCalradia
             equipSoldier ??= equipSoldierSeq.Where(c => TroopHasPreferredFormationClass(c)).RandomPick();
             equipSoldier ??= equipSoldierSeq.RandomPick();
 
-#if STABLE
-            if (equipSoldier?.BattleEquipments.RandomPick() is Equipment equip)
-                hero.BattleEquipment.FillFrom(equip);
-#else
             if (equipSoldier?.RandomBattleEquipment is Equipment equip)
                 hero.BattleEquipment.FillFrom(equip);
-#endif
 
             // All done!
             hero.ChangeState(Hero.CharacterStates.Active);
