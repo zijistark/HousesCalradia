@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
+
+using HarmonyLib;
 
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
+using TaleWorlds.Localization;
 
 
 namespace HousesCalradia
@@ -234,6 +238,19 @@ namespace HousesCalradia
 
             // Commit the new body properties, and we're done!
             SetStaticBodyProperties(hero, heroSliders.GetStaticBodyProperties());
+        }
+
+        private delegate TextObject GetHeroNamePropertyDelegate(Hero instance);
+        private static readonly MethodInfo? GetHeroNameProperty = AccessTools.PropertyGetter(typeof(Hero), nameof(Hero.Name));
+        private static readonly AccessTools.FieldRef<Hero, TextObject>? GetHeroNameField = AccessTools.FieldRefAccess<Hero, TextObject>("Hero");
+
+        public static TextObject? GetHeroName(this Hero hero)
+        {
+            if (GetHeroNameField is not null)
+                return GetHeroNameField(hero);
+            if (GetHeroNameProperty is not null)
+                return GetHeroNameProperty?.Invoke(hero, Array.Empty<object>()) as TextObject;
+            return null;
         }
     }
 }

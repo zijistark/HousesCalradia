@@ -222,7 +222,7 @@ namespace HousesCalradia
         private string GetHeroTrace(Hero h, int clanFitness = -1)
         {
             string fitnessStr = (clanFitness < 0) ? string.Empty : $" (CF={clanFitness})";
-            return $"{h.Name} {h.Clan.Name}{fitnessStr} of {h.Clan.Kingdom.Name} (age {h.Age:F0})";
+            return $"{h.GetHeroName()} {h.Clan.Name}{fitnessStr} of {h.Clan.Kingdom.Name} (age {h.Age:F0})";
         }
 
         private void SetParameters()
