@@ -42,7 +42,7 @@ namespace HousesCalradia.Patches
             }
 
             Util.Log.Print($"[{CampaignTime.Now}] CLAN EXTINCTION PREVENTION: Leader of clan {victim.Clan.Name},"
-                         + $" {victim.Name} of age {victim.Age:F0}, died without a valid heir (reason:"
+                         + $" {victim.GetHeroName()} of age {victim.Age:F0}, died without a valid heir (reason:"
                          + $" {Enum.GetName(typeof(KillCharacterAction.KillCharacterActionDetail), actionDetail)})!");
 
             // Spawn a male noble "distant relative" into the clan
@@ -52,7 +52,7 @@ namespace HousesCalradia.Patches
             if (successor is null)
                 Util.Log.Print(" -> ERROR: Could not find a noble character template to spawn lord!");
             else
-                Util.Log.Print($" -> Summoned distant relative {successor.Name} of age {successor.Age:F0}"
+                Util.Log.Print($" -> Summoned distant relative {successor.GetHeroName()} of age {successor.Age:F0}"
                              + $" to assume leadership of clan {successor.Clan.Name}.");
         }
     }
