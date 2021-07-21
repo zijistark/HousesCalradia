@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>1.2.9</Version>
+    <Version>1.2.9.1</Version>
     <ModuleName>$(MSBuildProjectName)</ModuleName>
   </PropertyGroup>
   
@@ -16,14 +16,14 @@
   <!-- Versions of Major Dependencies (For Package References & SubModule.xml Substitution) -->
   <PropertyGroup>
     <BuildResourcesVersion>1.0.0.33</BuildResourcesVersion>
-    <HarmonyVersion>2.0.4</HarmonyVersion>
+    <HarmonyVersion>2.1.0</HarmonyVersion>
     <MCMVersion>3.1.9</MCMVersion>
     <ExternalMCMVersion>4.3.10</ExternalMCMVersion>
   </PropertyGroup>
 
   <!-- Game Versions for Stable and Beta -->
   <PropertyGroup>
-    <GameVersion Condition="$(IsStable) == 'true'">1.5.9</GameVersion>
+    <GameVersion Condition="$(IsStable) == 'true'">1.5.10</GameVersion>
     <GameVersion Condition="$(IsBeta) == 'true'">1.6.0</GameVersion>
   </PropertyGroup>
 
@@ -74,7 +74,7 @@
     <PackageReference Include="Bannerlord.MCM" Version="$(MCMVersion)" />
     <PackageReference Include="Lib.Harmony" Version="$(HarmonyVersion)" />
     <!-- Enable NET5 Features on NET472 -->
-    <PackageReference Include="IsExternalInit" Version="1.0.0">
+    <PackageReference Include="IsExternalInit" Version="1.0.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
